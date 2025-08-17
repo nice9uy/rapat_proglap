@@ -1,0 +1,13 @@
+[project]
+name = "rapat-proglap"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "django>=5.2.5",
+    "django-compressor>=4.5.1",
+    "django-minify-html>=1.12.0",
+    "djhtml>=3.0.9",
+    "ruff>=0.12.9",
+]

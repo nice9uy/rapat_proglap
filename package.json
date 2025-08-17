@@ -1,0 +1,21 @@
+{
+  "name": "arsip_surat",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.4",
+    "flowbite": "^3.1.2",
+    "tailwindcss": "^4.1.4"
+  },
+  "scripts": {
+     "dev"  : "bunx @tailwindcss/cli -i ./static/src/input.css -o ./static/css/tailwindcss.css --watch",
+     "build"  : "bunx NODE_ENV=production @tailwindcss/cli -i ./static/src/input.css -o ./static/css/tailwindcss.css --watch"
+
+  }
+} 

@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load l10n %}
+
+{% block dashboard %}
+  <div class="antialiased bg-gray-800  ">
+    {% include 'components/header.html' %}
+
+    <main class="p-4 pt-20 ">
+
+      <div class="max-w-4xl mx-auto">
+        <div class="grid grid-cols-4 sm:grid-cols-4 gap-4">
+
+      <!-- Kotak 1 -->
+          <div class="text-white border-gray-400 rounded-lg h-32">
+            <div class="overflow-hidden shadow sm:rounded-lg bg-gray-600 h-full">
+              <div class="px-4 py-5 text-center">
+                <dl>
+                  <dt class="text-2xl font-bold text-white truncate">TOTAL KAS</dt>
+                  <dd class="mt-1 text-2xl font-semibold text-yellow-300">12x</dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+
+
+      <!-- Kotak 2 -->
+          <div class="text-white border-gray-400 rounded-lg h-32">
+            <div class="overflow-hidden shadow sm:rounded-lg bg-gray-600 h-full">
+              <div class="px-4 py-5 text-center">
+                <dl>
+                  <dt class="text-2xl font-bold text-white truncate">Jumlah Rapat Bulan ini</dt>
+                  <dd class="mt-1 text-2xl font-semibold text-yellow-300">12x</dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+
+      <!-- Kotak 3 -->
+          <div class="text-white border-gray-400 rounded-lg h-32">
+            <div class="overflow-hidden shadow sm:rounded-lg bg-gray-600 h-full">
+              <div class="px-4 py-5 text-center">
+                <dl>
+                  <dt class="text-2xl font-bold text-white truncate">KAS Bulan Ini</dt>
+                  <dd class="mt-1 text-2xl font-semibold text-yellow-300">12x</dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+
+      <!-- Kotak 4 -->
+          <div class="text-white border-gray-400 rounded-lg h-32">
+            <div class="overflow-hidden shadow sm:rounded-lg bg-gray-600 h-full">
+              <div class="px-4 py-5 text-center">
+                <dl>
+                  <dt class="text-2xl font-bold text-white truncate">Pengeluaran Bulan Ini</dt>
+                  <dd class="mt-1 text-2xl font-semibold text-yellow-300">12x</dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="pr-2">
+    <div class="text-white font-bold ">
+      ANGGOTA YANG RAPAT PALING SEDIKIT  :
+    </div>
+
+    <div class="mt-3" id="tabel_eselon1"></div>
+    <div class="mx-auto">
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          var table = new Tabulator("#tabel_eselon1", {
+            layout: "fitColumns",
+            responsiveLayout: "collapse",
+            ajaxURL: "",
+            ajaxParams: {
+              page: 1,
+              size: 15,
+            },
+            ajaxConfig: "GET",
+            pagination: true,
+            paginationMode: "local", // fetch page dari server
+
+            placeholder: "Data tidak tersedia",
+
+            columns: [
+
+              {
+                title: "NAMA ",
+                field: "nama_satker_lengkap",
+                headerHozAlign: "center"
+              },
+              {
+                title: "JUMLAH RAPAT BULAN INI",
+                field: "nama_satker_lengkap",
+                headerHozAlign: "center"
+              },
+
+            ],
+
+        // Opsional: log error pagination
+            ajaxError: function(xhr, textStatus, errorThrown) {
+              console.error("Ajax Error:", textStatus, errorThrown);
+            }
+          });
+        });
+      </script>
+
+    </div>
+
+  </div>
+
+
+
+
+{% endblock %}
