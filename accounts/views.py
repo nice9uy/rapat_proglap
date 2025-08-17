@@ -23,7 +23,7 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('dashbaord')  # Ganti 'home' dengan nama URL tujuan
+            return redirect('dashboard')  # Ganti 'home' dengan nama URL tujuan
         else:
             messages.error(request, "Username atau password salah.")
 

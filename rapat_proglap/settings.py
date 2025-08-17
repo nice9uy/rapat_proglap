@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     "django_minify_html",
     'accounts',
     'dashboard',
+    'data_rapat',
+    'tambah_user',
     
 ]
 

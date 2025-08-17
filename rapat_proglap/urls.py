@@ -25,4 +25,7 @@ urlpatterns = [
     path("accounts/", include("accounts.urls")),
     path("accounts/", include("django.contrib.auth.urls")),
     path("dashboard/", include("dashboard.urls")),
+    path("data_rapat/", include("data_rapat.urls")),
+    path("tambah_user/", include("tambah_user.urls")),
 ]
+
