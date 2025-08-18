@@ -150,3 +150,7 @@ MESSAGE_TAGS = {
 
 # AUTH_USER_MODEL = "accounts.User"
 
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 3  # 3 hari dalam detik
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
+LOGIN_URL = '/accounts/login/'

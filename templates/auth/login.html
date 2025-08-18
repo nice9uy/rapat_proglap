@@ -12,11 +12,11 @@
             {% csrf_token %}
             <div>
               <label for="username" class="block mb-2 text-sm font-bold text-white">USERNAME</label>
-              <input type="text" name="username" id="username" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-lg rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="12345678901234" />
+              <input type="text" name="username" id="username" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-lg rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="" />
             </div>
             <div>
               <label for="password" class="block mb-2 text-sm font-bold  text-white">PASSWORD</label>
-              <input type="password" name="password" id="password" placeholder="••••••••" v-model="password" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-lg rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
+              <input type="password" name="password" id="password" placeholder="" v-model="password" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-lg rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
             </div>
             <div class="text-center">
               <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-bold rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">LOGIN</button>
@@ -24,10 +24,8 @@
           </form>
         </div>
       </div>
-      {% if get_copyright == True %}
-        {% include 'copyright.html' %}
-      {% else %}
-      {% endif %}
+      {% include 'copyright.html' %}
+
     </div>
   </section>
 {% endblock %}

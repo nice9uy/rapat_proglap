@@ -13,8 +13,8 @@
         <div class="">
           TAMBAH ANGGOTA
         </div>
-        <button data-modal-target="authentication-modal" data-modal-toggle="authentication-modal" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
-          TAMBAH 
+        <button data-modal-target="tambah_user" data-modal-toggle="tambah_user" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
+          TAMBAH
         </button>
       </div>
       <div class="mt-3" id="table_tambah_user"></div>
@@ -24,7 +24,7 @@
             var table = new Tabulator("#table_tambah_user", {
               layout: "fitColumns", // Adjust columns to fit the table width
               responsiveLayout: "collapse",
-              ajaxURL: "{% url 'tambah_user_api' %}", // URL to fetch data
+              ajaxURL: "{%  url 'tambah_user_api' %}", // URL to fetch data
               placeholder:"Data tidak tersedia",
               ajaxConfig: "GET", // HTTP method
               pagination:true, //enable pagination
@@ -34,54 +34,60 @@
               dataTree:true,
               dataTreeStartExpanded:false,
               columns: [
-                { title: "NO", field: "no", hozAlign : "center", headerHozAlign: "center", width: 200 ,  formatter: function (cell) {
+                { title: "NO", field: "no", hozAlign: "center", width: 150 , headerHozAlign: "center", formatter: function (cell) {
 
                   let pageSize = cell.getTable().getPageSize();
                   let page = cell.getTable().getPage();
                   return ((page - 1) * pageSize + cell.getRow().getPosition()) ;
                 }, },
                 { title: "NAMA", field: "nama" , headerHozAlign: "center" },
-                { title: "AKSI", field: "actions", hozAlign: "center", headerHozAlign: "center",git
-                  formatter: function(cell, formatterParams, onRendered) {
+                {
+                  title: "AKSI",
+                  field: "actions",
+                  hozAlign: "center",
+                  headerHozAlign: "center",
+                  formatter: function (cell) {
+                    const rowData = cell.getRow().getData();
                     return `
-                  
-                    <div class="flex space-x-2 justify-center gap-2">
-                       <button data-modal-target="non_aktif_user{{ data.id }}" data-modal-toggle="non_aktif_user{{ data.nip }}" class="non_aktif_user_organisasi bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded focus:ring-4 focus:ring-red-300" title="NON AKTIF">
-                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24">
-                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 18 6M6 6l12 12"/>
+                      <div class="flex space-x-2 justify-center gap-2">
+                        <button 
+                          data-modal-target="user_edit${rowData.id}" 
+                          data-modal-toggle="user_edit${rowData.id}" 
+                          class="user_edit bg-blue-500 dark:bg-blue-700 hover:bg-blue-800 text-white font-bold py-1 px-2 rounded focus:ring-4 focus:ring-blue-300" 
+                          title="EDIT">
+                         <svg class="w-4 h-4 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
                         </svg>
-                      </button>
-                       <button data-modal-target="ganti_jabatan{{ data.nip }}" data-modal-toggle="ganti_jabatan{{ data.nip }}" class="ganti_jabatan_user bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded focus:ring-4 focus:ring-blue-300" title="GANTI/UBAH JABATAN">
-                       <svg class="w-4 h-4 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.484 9.166 15 7h5m0 0-3-3m3 3-3 3M4 17h4l1.577-2.253M4 7h4l7 10h5m0 0-3 3m3-3-3-3"/>
-                      </svg>
-                      </button>
-                    </div>
-                    
-                    `;
-                  },
 
-                  cellClick: function(e, cell) {
+                        </button>
+                         <button 
+                          data-modal-target="delete_user${rowData.id}" 
+                          data-modal-toggle="delete_user${rowData.id}" 
+                          class="delete_user bg-red-500 hover:bg-red-800 text-white font-bold py-1 px-2 rounded focus:ring-4 focus:ring-red-300" 
+                          title="DELETE">
+                          <svg class="w-4 h-4 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m6 6 12 12m3-6a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                          </svg>
+
+                        </button>
+                      </div>
+                   `;
+                  },
+                  cellClick: function (e, cell) {
                     const rowData = cell.getRow().getData();
 
-                    const nonAktifBtn = e.target.closest('.non_aktif_user_organisasi');
-                    if (nonAktifBtn) {
-
-                      const modalId = `non_aktif_user${rowData.nip}`;
+                    if (e.target.closest('.user_edit')) {
+                      const modalId = `user_edit${rowData.id}`;
                       const modalElement = document.getElementById(modalId);
-
                       if (modalElement) {
                         const modal = new Modal(modalElement);
                         modal.show();
                       }
                     }
 
-                    const GantiJabatanBtn = e.target.closest('.ganti_jabatan_user');
-                    if (GantiJabatanBtn) {
-
-                      const modalId = `ganti_jabatan${rowData.nip}`;
+                    if (e.target.closest('.delete_user')) {
+                      const modalId = `delete_user${rowData.id}`;
                       const modalElement = document.getElementById(modalId);
-
                       if (modalElement) {
                         const modal = new Modal(modalElement);
                         modal.show();
@@ -98,7 +104,40 @@
 
     </div>
     {% include 'tambah_user/modal/tambah.html' %}
+    {% include 'tambah_user/modal/edit.html' %}
+    {% include 'tambah_user/modal/delete.html' %}
 
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+    // 1. Inisialisasi semua modal setelah DOM siap
+        const modalElements = document.querySelectorAll('[id^="user_edit"], [id^="delete_user"], #tambah_user');
+        window.modals = {}; // Simpan referensi
+
+        modalElements.forEach(el => {
+          const id = el.getAttribute('id');
+          if (!window.modals[id]) {
+            window.modals[id] = new Modal(el);
+          }
+        });
+
+    // 2. Biarkan Tabulator generate tombol, tapi handle klik manual
+        document.body.addEventListener("click", function (e) {
+          const btn = e.target.closest('[data-modal-toggle]');
+          if (btn) {
+            e.preventDefault();
+            const targetId = btn.getAttribute('data-modal-toggle');
+            const modal = window.modals[targetId];
+            if (modal) {
+              modal.show();
+            } else {
+            }
+          }
+        });
+      });
+    </script>
+
+          {% include 'copyright.html' %}
+    
 
 
 {% endblock %}
