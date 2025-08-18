@@ -10,5 +10,6 @@ dependencies = [
     "django-compressor>=4.5.1",
     "django-minify-html>=1.12.0",
     "djhtml>=3.0.9",
+    "polars>=1.32.3",
     "ruff>=0.12.9",
 ]

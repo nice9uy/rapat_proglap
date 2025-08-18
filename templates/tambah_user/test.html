@@ -1,53 +1,65 @@
 <script>
-  columns: [
-    {
-      title: "NO",
-      field: "no",
-      hozAlign: "center",
-      headerHozAlign: "center",
-      width: 130,
-      formatter: function (cell) {
-        const table = cell.getTable();
-        const page = table.getPage();
-        const pageSize = table.getPageSize();
-        const rowPos = cell.getRow().getPosition();
-        return ((page - 1) * pageSize) + rowPos;
+  document.addEventListener("DOMContentLoaded", function () {
+    // Inisialisasi semua modal
+    const modalElements = document.querySelectorAll('[id^="user_edit"], [id^="delete_user"], #tambah_user');
+    window.modals = {};
+
+    modalElements.forEach(el => {
+      const id = el.getAttribute('id');
+      if (!window.modals[id]) {
+        window.modals[id] = new Modal(el);
       }
-    },
-    { title: "JABATAN", field: "jabatan", headerHozAlign: "center" },
-    { title: "NAMA", field: "nama", headerHozAlign: "center" },
-    { title: "PANGKAT", field: "pangkat", headerHozAlign: "center" },
-    { title: "NIP", field: "nip", headerHozAlign: "center" },
-    {
-      title: "AKSI",
-      field: "actions",
-      hozAlign: "center",
-      headerHozAlign: "center",
-      formatter: function (cell) {
-        const rowData = cell.getRow().getData();
-        return `
-                      <div class="flex space-x-2 justify-center gap-2">
-                        <button 
-                          data-modal-target="aktif_anggota${rowData.nip}" 
-                          data-modal-toggle="aktif_anggota${rowData.nip}" 
-                          class="aktif_anggota bg-green-600 hover:bg-green-800 text-white font-bold py-1 px-2 rounded focus:ring-4 focus:ring-green-300" 
-                          title="AKTIF">
-                          <svg class="w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11.917 9.724 16.5 19 7.5"/>
-                          </svg>
-                        </button>
-                      </div>
-                   `;
-      },
-      cellClick: function (e, cell) {
-        const rowData = cell.getRow().getData();
-        const modalId = `aktif_anggota${rowData.nip}`;
-        const modalElement = document.getElementById(modalId);
-        if (modalElement) {
-          const modal = new Modal(modalElement);
-          modal.show();
+    });
+
+    // Handle klik tombol buka modal
+    document.body.addEventListener("click", function (e) {
+      const btn = e.target.closest('[data-modal-toggle]');
+      if (btn) {
+        e.preventDefault();
+        const targetId = btn.getAttribute('data-modal-toggle');
+        const modal = window.modals[targetId];
+        if (modal) {
+          modal.show(); // Buka modal lewat JS
         }
       }
-    }
-  ]
+    });
+
+    // Handle klik tombol tutup (termasuk X dan backdrop)
+    document.body.addEventListener("click", function (e) {
+      const closeBtn = e.target.closest('[data-modal-hide]');
+      if (closeBtn) {
+        e.preventDefault();
+        const targetId = closeBtn.getAttribute('data-modal-hide');
+        const modal = window.modals[targetId];
+        if (modal) {
+          modal.hide(); // Tutup lewat JS → Flowbite akan hapus backdrop
+        }
+      }
+    });
+
+    // Opsional: klik backdrop juga tutup modal
+    document.body.addEventListener("click", function (e) {
+      if (e.target.classList.contains('modal-backdrop')) {
+        // Cari modal yang aktif
+        const modal = document.querySelector('.modal[style*="display: block"]');
+        const modalId = modal ? modal.getAttribute('id') : null;
+        if (modalId && window.modals[modalId]) {
+          window.modals[modalId].hide();
+        }
+      }
+    });
+
+    // Handle form submit: setelah submit, tutup modal & hapus backdrop
+    document.getElementById('tambah_user').addEventListener('submit', function () {
+      const modal = window.modals['tambah_user'];
+      if (modal) {
+        modal.hide(); // Pastikan modal ditutup secara manual
+      }
+    });
+
+    // Inisialisasi Tabulator (seperti sebelumnya)
+    var table = new Tabulator("#table_tambah_user", {
+      // ... konfigurasi kamu
+    });
+  });
 </script>

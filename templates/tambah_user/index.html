@@ -10,10 +10,12 @@
 
     <div class="p-4 pt-20">
       <div class="flex text-white text-2xl justify-between">
-        <div class="">
-          TAMBAH ANGGOTA
-        </div>
-        <button data-modal-target="tambah_user" data-modal-toggle="tambah_user" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
+        <div>TAMBAH ANGGOTA</div>
+        <button
+          data-modal-target="tambah_user"
+          data-modal-toggle="tambah_user"
+          class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          type="button">
           TAMBAH
         </button>
       </div>
@@ -21,26 +23,89 @@
       <div class="mx-auto">
         <script>
           document.addEventListener("DOMContentLoaded", function () {
-            var table = new Tabulator("#table_tambah_user", {
-              layout: "fitColumns", // Adjust columns to fit the table width
-              responsiveLayout: "collapse",
-              ajaxURL: "{%  url 'tambah_user_api' %}", // URL to fetch data
-              placeholder:"Data tidak tersedia",
-              ajaxConfig: "GET", // HTTP method
-              pagination:true, //enable pagination
-              paginationMode:"remote", //enable remote pagination
-              paginationSize: 15, // Jumlah data per halaman
-              paginationCounter:"rows",
-              dataTree:true,
-              dataTreeStartExpanded:false,
-              columns: [
-                { title: "NO", field: "no", hozAlign: "center", width: 150 , headerHozAlign: "center", formatter: function (cell) {
+    // Inisialisasi semua modal
+            const modalElements = document.querySelectorAll('[id^="user_edit"], [id^="delete_user"], #tambah_user');
+            window.modals = {};
 
-                  let pageSize = cell.getTable().getPageSize();
-                  let page = cell.getTable().getPage();
-                  return ((page - 1) * pageSize + cell.getRow().getPosition()) ;
-                }, },
-                { title: "NAMA", field: "nama" , headerHozAlign: "center" },
+            modalElements.forEach(el => {
+              const id = el.getAttribute('id');
+              if (!window.modals[id]) {
+                window.modals[id] = new Modal(el);
+              }
+            });
+
+    // Handle klik tombol buka modal
+            document.body.addEventListener("click", function (e) {
+              const btn = e.target.closest('[data-modal-toggle]');
+              if (btn) {
+                e.preventDefault();
+                const targetId = btn.getAttribute('data-modal-toggle');
+                const modal = window.modals[targetId];
+                if (modal) {
+                  modal.show(); // Buka modal lewat JS
+                }
+              }
+            });
+
+    // Handle klik tombol tutup (termasuk X dan backdrop)
+            document.body.addEventListener("click", function (e) {
+              const closeBtn = e.target.closest('[data-modal-hide]');
+              if (closeBtn) {
+                e.preventDefault();
+                const targetId = closeBtn.getAttribute('data-modal-hide');
+                const modal = window.modals[targetId];
+                if (modal) {
+                  modal.hide(); // Tutup lewat JS → Flowbite akan hapus backdrop
+                }
+              }
+            });
+
+    // Opsional: klik backdrop juga tutup modal
+            document.body.addEventListener("click", function (e) {
+              if (e.target.classList.contains('modal-backdrop')) {
+        // Cari modal yang aktif
+                const modal = document.querySelector('.modal[style*="display: block"]');
+                const modalId = modal ? modal.getAttribute('id') : null;
+                if (modalId && window.modals[modalId]) {
+                  window.modals[modalId].hide();
+                }
+              }
+            });
+
+    // Handle form submit: setelah submit, tutup modal & hapus backdrop
+            document.getElementById('tambah_user').addEventListener('submit', function () {
+              const modal = window.modals['tambah_user'];
+              if (modal) {
+                modal.hide(); // Pastikan modal ditutup secara manual
+              }
+            });
+
+
+      // 3. Tabulator
+            var table = new Tabulator("#table_tambah_user", {
+              layout: "fitColumns",
+              responsiveLayout: "collapse",
+              ajaxURL: "{% url 'tambah_user_api' %}",
+              placeholder: "Data tidak tersedia",
+              ajaxConfig: "GET",
+              pagination: true,
+              paginationMode: "remote",
+              paginationSize: 15,
+              paginationCounter: "rows",
+              columns: [
+                {
+                  title: "NO",
+                  field: "no",
+                  hozAlign: "center",
+                  width: 150,
+                  headerHozAlign: "center",
+                  formatter: function (cell) {
+                    let pageSize = cell.getTable().getPageSize();
+                    let page = cell.getTable().getPage();
+                    return (page - 1) * pageSize + cell.getRow().getPosition();
+                  }
+                },
+                { title: "NAMA", field: "nama", headerHozAlign: "center" },
                 {
                   title: "AKSI",
                   field: "actions",
@@ -49,50 +114,27 @@
                   formatter: function (cell) {
                     const rowData = cell.getRow().getData();
                     return `
-                      <div class="flex space-x-2 justify-center gap-2">
-                        <button 
-                          data-modal-target="user_edit${rowData.id}" 
-                          data-modal-toggle="user_edit${rowData.id}" 
-                          class="user_edit bg-blue-500 dark:bg-blue-700 hover:bg-blue-800 text-white font-bold py-1 px-2 rounded focus:ring-4 focus:ring-blue-300" 
-                          title="EDIT">
-                         <svg class="w-4 h-4 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
-                        </svg>
-
-                        </button>
-                         <button 
-                          data-modal-target="delete_user${rowData.id}" 
-                          data-modal-toggle="delete_user${rowData.id}" 
-                          class="delete_user bg-red-500 hover:bg-red-800 text-white font-bold py-1 px-2 rounded focus:ring-4 focus:ring-red-300" 
-                          title="DELETE">
-                          <svg class="w-4 h-4 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m6 6 12 12m3-6a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-                          </svg>
-
-                        </button>
-                      </div>
-                   `;
-                  },
-                  cellClick: function (e, cell) {
-                    const rowData = cell.getRow().getData();
-
-                    if (e.target.closest('.user_edit')) {
-                      const modalId = `user_edit${rowData.id}`;
-                      const modalElement = document.getElementById(modalId);
-                      if (modalElement) {
-                        const modal = new Modal(modalElement);
-                        modal.show();
-                      }
-                    }
-
-                    if (e.target.closest('.delete_user')) {
-                      const modalId = `delete_user${rowData.id}`;
-                      const modalElement = document.getElementById(modalId);
-                      if (modalElement) {
-                        const modal = new Modal(modalElement);
-                        modal.show();
-                      }
-                    }
+                        <div class="flex space-x-2 justify-center gap-2">
+                          <button 
+                            data-modal-target="user_edit${rowData.id}" 
+                            data-modal-toggle="user_edit${rowData.id}" 
+                            class="user_edit bg-blue-500 hover:bg-blue-800 text-white font-bold py-1 px-2 rounded focus:ring-4 focus:ring-blue-300" 
+                            title="EDIT">
+                            <svg class="w-4 h-4 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
+                            </svg>
+                          </button>
+                          <button 
+                            data-modal-target="delete_user${rowData.id}" 
+                            data-modal-toggle="delete_user${rowData.id}" 
+                            class="delete_user bg-red-500 hover:bg-red-800 text-white font-bold py-1 px-2 rounded focus:ring-4 focus:ring-red-300" 
+                            title="DELETE">
+                            <svg class="w-4 h-4 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                              <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m6 6 12 12m3-6a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                            </svg>
+                          </button>
+                        </div>
+                      `;
                   }
                 }
               ]
@@ -107,37 +149,8 @@
     {% include 'tambah_user/modal/edit.html' %}
     {% include 'tambah_user/modal/delete.html' %}
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-    // 1. Inisialisasi semua modal setelah DOM siap
-        const modalElements = document.querySelectorAll('[id^="user_edit"], [id^="delete_user"], #tambah_user');
-        window.modals = {}; // Simpan referensi
+    {% include 'copyright.html' %}
 
-        modalElements.forEach(el => {
-          const id = el.getAttribute('id');
-          if (!window.modals[id]) {
-            window.modals[id] = new Modal(el);
-          }
-        });
-
-    // 2. Biarkan Tabulator generate tombol, tapi handle klik manual
-        document.body.addEventListener("click", function (e) {
-          const btn = e.target.closest('[data-modal-toggle]');
-          if (btn) {
-            e.preventDefault();
-            const targetId = btn.getAttribute('data-modal-toggle');
-            const modal = window.modals[targetId];
-            if (modal) {
-              modal.show();
-            } else {
-            }
-          }
-        });
-      });
-    </script>
-
-          {% include 'copyright.html' %}
-    
 
 
 {% endblock %}
