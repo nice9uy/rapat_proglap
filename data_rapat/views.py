@@ -9,19 +9,24 @@ from tambah_user.models import NamaDb
 from django.contrib import messages
 from django.core.paginator import Paginator
 import logging
+import random
+import string
 
 
 logger = logging.getLogger(__name__)
 
+
+def generate_random_id():
+    """Generate random 15-character ID (uppercase + digits)"""
+    characters = string.ascii_uppercase + string.digits  # A-Z, 0-9
+    return ''.join(random.choices(characters, k=25))
 
 # Create your views here.
 @login_required(login_url="/accounts/login/")
 def data_rapat(request):
     nama_anggota = list(NamaDb.objects.all().values_list("nama", flat=True))
 
-    data_rapat = DataRapatDb.objects.all().values("id")
-
-    print(data_rapat)
+    data_rapat = list(DataRapatDb.objects.values('id', "id_random"))
 
     cek_group = list(request.user.groups.all())
     group = [group.name for group in cek_group]

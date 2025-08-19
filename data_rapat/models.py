@@ -1,9 +1,12 @@
 from django.db import models
+import uuid
+
 
 # Create your models here.
 class DataRapatDb(models.Model):
-    id = models.AutoField(primary_key=True, unique=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     id_nama_anggota = models.CharField(max_length=50, null=True, blank=True)
+    id_random = models.CharField(max_length=10, null=True, blank=True)
     tanggal = models.DateTimeField()
     jam = models.CharField(max_length=10, null=True, blank=True)
     nama = models.CharField(max_length=100, null=True, blank=True)

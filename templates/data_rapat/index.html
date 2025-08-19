@@ -6,8 +6,6 @@
 {% block data_rapat %}
     <div class="antialiased bg-gray-800  ">
         {% include 'components/header_data_rapat.html' %}
-
-
         <div class="p-4 pt-20">
             <div class="flex text-white text-2xl justify-between">
                 <div class="">
@@ -20,7 +18,7 @@
 
             <div class="mt-3" id="tabel_data_rapat"></div>
             <div class="mx-auto">
-                <script>
+                {% comment %} <script>
                     document.addEventListener("DOMContentLoaded", function () {
                         var table = new Tabulator("#tabel_data_rapat", {
                             layout: "fitColumns",
@@ -92,12 +90,12 @@
                                         return `
                                               <div class="flex space-x-2 justify-center">
                                                   <!-- Tombol Nonaktif -->
-                                                  <button data-modal-target="non_aktif${data.id}" data-modal-toggle="non_aktif${data.id}" class="non_aktif_organisasi bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded focus:ring-4 focus:ring-red-300" title="NON AKTIF">
+                                                  <button data-modal-target="edit_data_rapat${data.id}" data-modal-toggle="edit_data_rapat${data.id}" class="data_rapat bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded focus:ring-4 focus:ring-red-300" title="NON AKTIF">
                                                       <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24">
                                                           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 18 6M6 6l12 12"/>
                                                       </svg>
                                                   </button>
-                                                  <button data-modal-target="edit${data.id}" data-modal-toggle="edit${data.id}" class="edit_organisasi bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded focus:ring-4 focus:ring-green-300" title="EDIT">
+                                                  <button data-modal-target="edit_nominal${data.id}" data-modal-toggle="edit_nominal${data.id}" class="edit_nominal_angka bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded focus:ring-4 focus:ring-green-300" title="EDIT">
                                                       <svg class="w-4 h-4 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24">
                                                           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
                                                       </svg>
@@ -109,15 +107,15 @@
                                         const data = cell.getRow().getData();
                                         const id = data.id;
 
-                                        const nonAktifBtn = e.target.closest('.non_aktif_organisasi');
+                                        const nonAktifBtn = e.target.closest('.data_rapat');
                                         if (nonAktifBtn) {
-                                            const modal = new Modal(document.getElementById(`non_aktif${id}`));
+                                            const modal = new Modal(document.getElementById(`edit_data_rapat${id}`));
                                             modal.show();
                                         }
 
-                                        const editBtn = e.target.closest('.edit_organisasi');
+                                        const editBtn = e.target.closest('.edit_nominal_angka');
                                         if (editBtn) {
-                                            const modal = new Modal(document.getElementById(`edit${id}`));
+                                            const modal = new Modal(document.getElementById(`edit_nominal${id}`));
                                             modal.show();
                                         }
                                     }
@@ -129,16 +127,117 @@
                             }
                         });
                     });
+                </script> {% endcomment %}
+
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        var table = new Tabulator("#tabel_data_rapat", {
+                            layout: "fitColumns", // Adjust columns to fit the table width
+                            responsiveLayout: "collapse",
+                            ajaxURL: "{% url 'data_rapat_api' %}",  // URL to fetch data
+                            placeholder:"Data tidak tersedia",
+                            ajaxConfig: "GET", // HTTP method
+                            pagination:true, //enable pagination
+                            paginationMode:"remote", //enable remote pagination
+                            paginationSize: 15, // Jumlah data per halaman
+                            paginationCounter:"rows",
+                            columns: [
+                                {
+                                    title: "NO",
+                                    field: "no",
+                                    hozAlign: "center",
+                                    headerHozAlign: "center",
+                                    formatter: function (cell) {
+                                        let page = cell.getTable().getPage();
+                                        let pageSize = cell.getTable().getPageSize();
+                                        return (page - 1) * pageSize + cell.getRow().getPosition(true);
+                                    }
+                                },
+                                {
+                                    title: "Tanggal",
+                                    field: "tanggal",
+                                    headerHozAlign: "center",
+                                    hozAlign: "center",
+                                    formatter: function(cell) {
+                                        const value = cell.getValue();
+                                        if (!value) return "";
+
+                                        const parts = value.split("-");
+                                        if (parts.length !== 3) return value;
+
+                                        const [tanggal, bulan, tahun] = parts;
+                                        const namaBulan = ["Januari","Februari","Maret","April","Mei","Juni",
+                                            "Juli","Agustus","September","Oktober","November","Desember"];
+
+                                        const idx = parseInt(bulan, 10) - 1;
+                                        return namaBulan[idx] ? `${tanggal} ${namaBulan[idx]} ${tahun}` : value;
+                                    }
+                                },
+                                { title: "Jam Rapat", field: "jam", headerHozAlign: "center" , hozAlign: "center" },
+                                { title: "Nama", field: "nama", headerHozAlign: "center" },
+                                { title: "Kontrak", field: "judul_kontrak", headerHozAlign: "center" },
+                                { title: "Masuk", field: "kas_masuk", headerHozAlign: "center", hozAlign: "right" },
+                                { title: "Keluar", field: "kas_keluar", headerHozAlign: "center", hozAlign: "right" },
+                                { title: "AKSI", field: "actions", hozAlign: "center", headerHozAlign: "center",
+                                    formatter: function(cell, formatterParams, onRendered) {
+                                        return `
+                                              <div class="flex space-x-2 justify-center gap-2">
+                                                  <!-- Tombol Nonaktif -->
+                                                  <button data-modal-target="edit_data_rapat{{ data.id }}" data-modal-toggle="edit_data_rapat{{ data.id }}" class="edit_data_rapat bg-green-600 hover:bg-green-800 text-white font-bold py-1 px-2 rounded focus:ring-4 focus:ring-green-300" title="AKTIF">
+                                                  <svg class="w-4 h-4 text-white " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11.917 9.724 16.5 19 7.5"/>
+                                                  </svg>
+
+                                                  </button>
+                                                  <button data-modal-target="edit_nominal{{ data.id }}" data-modal-toggle="edit_nominal{{ data.id }}" class="edit_nominal bg-yellow-600 hover:bg-yellow-800 text-white font-bold py-1 px-2 rounded focus:ring-4 focus:ring-yellow-300" title="EDIT">
+                                                  <svg class="w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
+                                                  </svg>
+                                                  </button>
+                                                </div>
+                                              `;
+                                    },
+                                    cellClick: function(e, cell) {
+                                        const rowData = cell.getRow().getData();
+
+                                        const modalId_edit_data_rapat = `edit_data_rapat${rowData.id}`;
+                                        const modalId_edit_nominal = `edit_nominal${rowData.id}`;
+
+                                        console.log(rowData)
+
+                                        const btnEdit_data_rapat = e.target.closest('.edit_data_rapat');
+                                        const btnEdit_nominal = e.target.closest('.edit_nominal');
+
+                                        if (btnEdit_data_rapat) {
+                                            const modalElement = document.getElementById(modalId_edit_data_rapat);
+                                            if (modalElement) {
+                                                const modal = new Modal(modalElement);
+                                                modal.show();
+                                            }
+                                        }
+                                        if (btnEdit_nominal) {
+                                            const modalElement = document.getElementById(modalId_edit_nominal);
+                                            if (modalElement) {
+                                                const modal = new Modal(modalElement);
+                                                modal.show();
+                                            }
+                                        }
+
+                                    }
+                                }
+                            ]
+
+                        });
+                    });
                 </script>
 
+
+
             </div>
-
         </div>
-
         {% include 'data_rapat/modal/tambah.html' %}
         {% include 'data_rapat/modal/edit_rapat.html' %}
-
-
+        {% include 'data_rapat/modal/edit_nominal.html' %}
 
 
 {% endblock %}

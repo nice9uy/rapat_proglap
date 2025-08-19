@@ -24,22 +24,22 @@
                         <label for="name" class="block mb-1 text-sm font-medium border-white text-white ">TANGGAL RAPAT</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <svg class="w-4 h-4 text-gray-700 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm3-3.572a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm4 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm4 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"/>
                                 </svg>
                             </div>
                             <input
                                 name="tanggal_rapat"
-                                id="datepicker-format"
+                                id="datepicker"
                                 datepicker
                                 datepicker-format="dd MM yyyy"
                                 type="text"
-                                class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-600 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                class="bg-white border border-white text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-600 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 placeholder="Pilih tanggal"
                                 required
                             >
                         </div>
-                        <label for="countries" class="block mb-2 text-sm font-medium  text-gray-900 dark:text-white">JAM RAPAT</label>
+                        <label for="countries" class="block mb-2 mt-1 text-sm font-medium  text-gray-900 dark:text-white">JAM RAPAT</label>
                         <select name="jam_rapat" id="countries" class="bg-gray-400 border border-white rounded-xl text-gray-900 text-sm  focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                             <option value="9" >09:00</option>
                             <option value="10">10:00</option>
@@ -104,45 +104,3 @@
     formatUangInput('kas_keluar');
 </script>
 
-
-
-<script>
-    // Tunggu modal "tambah_rapat" dibuka
-    document.addEventListener("DOMContentLoaded", function () {
-        const tambahModalEl = document.getElementById('tambah_rapat');
-
-        // Cegah inisialisasi ganda
-        let datePickerInstance = null;
-
-        if (tambahModalEl) {
-            tambahModalEl.addEventListener('shown', function () {
-                // Hapus instance lama jika ada
-                if (datePickerInstance) {
-                    datePickerInstance.destroy();
-                    datePickerInstance = null;
-                }
-
-                const dateInput = document.getElementById('tanggal_rapat_input');
-
-                // Inisialisasi ulang datepicker
-                datePickerInstance = new Datepicker(dateInput, {
-                    format: 'dd MM yyyy',
-                    autohide: true,
-                    title: 'Pilih Tanggal Rapat',
-                    language: 'id'
-                });
-
-                // Fokus ke input agar datepicker langsung muncul
-                dateInput.focus();
-            });
-
-            // Hancurkan datepicker saat modal ditutup agar tidak memori bocor
-            tambahModalEl.addEventListener('hidden', function () {
-                if (datePickerInstance) {
-                    datePickerInstance.destroy();
-                    datePickerInstance = null;
-                }
-            });
-        }
-    });
-</script>
