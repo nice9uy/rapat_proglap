@@ -2106,6 +2106,9 @@
   .border-gray-400 {
     border-color: var(--color-gray-400);
   }
+  .border-gray-600 {
+    border-color: var(--color-gray-600);
+  }
   .border-white {
     border-color: var(--color-white);
   }
@@ -2157,6 +2160,12 @@
   .bg-gray-200 {
     background-color: var(--color-gray-200);
   }
+  .bg-gray-400 {
+    background-color: var(--color-gray-400);
+  }
+  .bg-gray-500 {
+    background-color: var(--color-gray-500);
+  }
   .bg-gray-600 {
     background-color: var(--color-gray-600);
   }
@@ -2177,6 +2186,9 @@
   }
   .bg-green-600 {
     background-color: var(--color-green-600);
+  }
+  .bg-green-700 {
+    background-color: var(--color-green-700);
   }
   .bg-red-500 {
     background-color: var(--color-red-500);
@@ -2314,6 +2326,9 @@
   }
   .py-8 {
     padding-block: calc(var(--spacing) * 8);
+  }
+  .ps-10 {
+    padding-inline-start: calc(var(--spacing) * 10);
   }
   .pt-1 {
     padding-top: calc(var(--spacing) * 1);
@@ -2614,6 +2629,11 @@
       @media (hover: hover) {
         color: var(--color-gray-500);
       }
+    }
+  }
+  .placeholder\:text-gray-300 {
+    &::placeholder {
+      color: var(--color-gray-300);
     }
   }
   .hover\:border-gray-300 {
@@ -2975,6 +2995,11 @@
       }
     }
   }
+  .dark\:bg-green-700 {
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--color-green-700);
+    }
+  }
   .dark\:text-blue-500 {
     @media (prefers-color-scheme: dark) {
       color: var(--color-blue-500);
@@ -3077,6 +3102,20 @@
         @media (hover: hover) {
           color: var(--color-white);
         }
+      }
+    }
+  }
+  .dark\:focus\:border-blue-500 {
+    @media (prefers-color-scheme: dark) {
+      &:focus {
+        border-color: var(--color-blue-500);
+      }
+    }
+  }
+  .dark\:focus\:ring-blue-500 {
+    @media (prefers-color-scheme: dark) {
+      &:focus {
+        --tw-ring-color: var(--color-blue-500);
       }
     }
   }
