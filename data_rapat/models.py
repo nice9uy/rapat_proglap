@@ -1,8 +1,9 @@
 from django.db import models
 
 # Create your models here.
-class DataRapat(models.Model):
+class DataRapatDb(models.Model):
     id = models.AutoField(primary_key=True, unique=True)
+    id_nama_anggota = models.CharField(max_length=50, null=True, blank=True)
     tanggal = models.DateTimeField()
     jam = models.CharField(max_length=10, null=True, blank=True)
     nama = models.CharField(max_length=100, null=True, blank=True)
@@ -10,10 +11,10 @@ class DataRapat(models.Model):
     kas_masuk = models.IntegerField(default=0)
     kas_keluar = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True) 
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return self.judul
+        return self.judul_kontrak
 
     class Meta:
-        verbose_name_plural = "judul_kontrak"
+        verbose_name_plural = "Kontrak"

@@ -4,91 +4,140 @@
 {% load l10n %}
 
 {% block data_rapat %}
-  <div class="antialiased bg-gray-800  ">
-    {% include 'components/header_data_rapat.html' %}
+    <div class="antialiased bg-gray-800  ">
+        {% include 'components/header_data_rapat.html' %}
 
 
-    <div class="p-4 pt-20">
-      <div class="flex text-white text-2xl justify-between">
-        <div class="">
-          DATA RAPAT
+        <div class="p-4 pt-20">
+            <div class="flex text-white text-2xl justify-between">
+                <div class="">
+                    DATA RAPAT
+                </div>
+                <button data-modal-target="tambah_rapat" data-modal-toggle="tambah_rapat" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
+                    TAMBAH RAPAT
+                </button>
+            </div>
+
+            <div class="mt-3" id="tabel_data_rapat"></div>
+            <div class="mx-auto">
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        var table = new Tabulator("#tabel_data_rapat", {
+                            layout: "fitColumns",
+                            responsiveLayout: "collapse",
+                            ajaxURL: "{% url 'data_rapat_api' %}",
+                            ajaxParams: {
+                                page: 1,
+                                size: 15,
+                            },
+                            ajaxConfig: "GET",
+                            pagination: true,
+                            paginationMode: "remote", // fetch page dari server
+                            paginationSize: 15,
+                            paginationSizeSelector: [15, 20, 50],
+                            paginationDataSent: {
+                                "page": "page",   // Kirim ?page=2
+                                "size": "size",   // Kirim ?size=15
+                            },
+                            paginationDataReceived: {
+                                "last_page": "last_page",  // Harus match dengan JSON response
+                                "data": "data"
+                            },
+                            placeholder: "Data tidak tersedia",
+                            columns: [
+                                {
+                                    title: "NO",
+                                    field: "no",
+                                    hozAlign: "center",
+                                    headerHozAlign: "center",
+                                    formatter: function (cell) {
+                                        let page = cell.getTable().getPage();
+                                        let pageSize = cell.getTable().getPageSize();
+                                        return (page - 1) * pageSize + cell.getRow().getPosition(true);
+                                    }
+                                },
+                                {
+                                    title: "Tanggal",
+                                    field: "tanggal",
+                                    headerHozAlign: "center",
+                                    hozAlign: "center",
+                                    formatter: function(cell) {
+                                        const value = cell.getValue();
+                                        if (!value) return "";
+
+                                        const parts = value.split("-");
+                                        if (parts.length !== 3) return value;
+
+                                        const [tanggal, bulan, tahun] = parts;
+                                        const namaBulan = ["Januari","Februari","Maret","April","Mei","Juni",
+                                            "Juli","Agustus","September","Oktober","November","Desember"];
+
+                                        const idx = parseInt(bulan, 10) - 1;
+                                        return namaBulan[idx] ? `${tanggal} ${namaBulan[idx]} ${tahun}` : value;
+                                    }
+                                },
+                                { title: "Jam Rapat", field: "jam", headerHozAlign: "center" , hozAlign: "center" },
+                                { title: "Nama", field: "nama", headerHozAlign: "center" },
+                                { title: "Kontrak", field: "judul_kontrak", headerHozAlign: "center" },
+                                { title: "Masuk", field: "kas_masuk", headerHozAlign: "center", hozAlign: "right" },
+                                { title: "Keluar", field: "kas_keluar", headerHozAlign: "center", hozAlign: "right" },
+                                {
+                                    title: "AKSI",
+                                    field: "actions",
+                                    hozAlign: "center",
+                                    headerHozAlign: "center",
+                                    formatter: function(cell, formatterParams, onRendered) {
+                                        const data = cell.getRow().getData();
+
+                                        return `
+                                              <div class="flex space-x-2 justify-center">
+                                                  <!-- Tombol Nonaktif -->
+                                                  <button data-modal-target="non_aktif${data.id}" data-modal-toggle="non_aktif${data.id}" class="non_aktif_organisasi bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded focus:ring-4 focus:ring-red-300" title="NON AKTIF">
+                                                      <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24">
+                                                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 18 6M6 6l12 12"/>
+                                                      </svg>
+                                                  </button>
+                                                  <button data-modal-target="edit${data.id}" data-modal-toggle="edit${data.id}" class="edit_organisasi bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded focus:ring-4 focus:ring-green-300" title="EDIT">
+                                                      <svg class="w-4 h-4 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24">
+                                                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
+                                                      </svg>
+                                                  </button>
+                                              </div>
+                                              `;
+                                    },
+                                    cellClick: function(e, cell) {
+                                        const data = cell.getRow().getData();
+                                        const id = data.id;
+
+                                        const nonAktifBtn = e.target.closest('.non_aktif_organisasi');
+                                        if (nonAktifBtn) {
+                                            const modal = new Modal(document.getElementById(`non_aktif${id}`));
+                                            modal.show();
+                                        }
+
+                                        const editBtn = e.target.closest('.edit_organisasi');
+                                        if (editBtn) {
+                                            const modal = new Modal(document.getElementById(`edit${id}`));
+                                            modal.show();
+                                        }
+                                    }
+                                }
+                            ],
+
+                            ajaxError: function(xhr, textStatus, errorThrown) {
+                                console.error("Ajax Error:", textStatus, errorThrown);
+                            }
+                        });
+                    });
+                </script>
+
+            </div>
+
         </div>
-        <button data-modal-target="tambah_rapat" data-modal-toggle="tambah_rapat" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
-          Toggle modal
-        </button>
-      </div>
 
-      <div class="mt-3" id="tabel_data_rapat"></div>
-      <div class="mx-auto">
-        <script>
-          document.addEventListener("DOMContentLoaded", function () {
-            var table = new Tabulator("#tabel_data_rapat", {
-              layout: "fitColumns",
-              responsiveLayout: "collapse",
-              ajaxURL: "",
-              ajaxParams: {
-                page: 1,
-                size: 15,
-              },
-              ajaxConfig: "GET",
-              pagination: true,
-              paginationMode: "local", // fetch page dari server
+        {% include 'data_rapat/modal/tambah.html' %}
+        {% include 'data_rapat/modal/edit_rapat.html' %}
 
-              placeholder: "Data tidak tersedia",
-
-              columns: [
-                {
-                  title: "No ",
-                  field: "nama_satker_lengkap",
-                  headerHozAlign: "center"
-                },
-
-                {
-                  title: "Tanggal ",
-                  field: "nama_satker_lengkap",
-                  headerHozAlign: "center"
-                },
-                {
-                  title: "Jam Rapat",
-                  field: "nama_satker_lengkap",
-                  headerHozAlign: "center"
-                },
-                {
-                  title: "Nama",
-                  field: "nama_satker_lengkap",
-                  headerHozAlign: "center"
-                },
-                {
-                  title: "Kontrak",
-                  field: "nama_satker_lengkap",
-                  headerHozAlign: "center"
-                },
-                {
-                  title: "Masuk",
-                  field: "nama_satker_lengkap",
-                  headerHozAlign: "center"
-                },
-                {
-                  title: "Keluar",
-                  field: "nama_satker_lengkap",
-                  headerHozAlign: "center"
-                },
-
-              ],
-
-        // Opsional: log error pagination
-              ajaxError: function(xhr, textStatus, errorThrown) {
-                console.error("Ajax Error:", textStatus, errorThrown);
-              }
-            });
-          });
-        </script>
-
-      </div>
-
-    </div>
-
-    {% include 'data_rapat/modal/tambah.html' %}
 
 
 

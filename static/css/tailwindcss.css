@@ -344,6 +344,9 @@
   }
 }
 @layer utilities {
+  .pointer-events-none {
+    pointer-events: none;
+  }
   .collapse {
     visibility: collapse;
   }
@@ -971,8 +974,17 @@
   .inset-0 {
     inset: calc(var(--spacing) * 0);
   }
+  .inset-y-0 {
+    inset-block: calc(var(--spacing) * 0);
+  }
+  .start-0 {
+    inset-inline-start: calc(var(--spacing) * 0);
+  }
   .-end-2 {
     inset-inline-end: calc(var(--spacing) * -2);
+  }
+  .end-2 {
+    inset-inline-end: calc(var(--spacing) * 2);
   }
   .end-2\.5 {
     inset-inline-end: calc(var(--spacing) * 2.5);
@@ -1626,6 +1638,9 @@
       text-align: center;
     }
   }
+  .w-1 {
+    width: calc(var(--spacing) * 1);
+  }
   .w-1\/2 {
     width: calc(1/2 * 100%);
   }
@@ -1741,6 +1756,9 @@
   }
   .flex-shrink-0 {
     flex-shrink: 0;
+  }
+  .border-collapse {
+    border-collapse: collapse;
   }
   .-translate-x-full {
     --tw-translate-x: -100%;
@@ -2163,9 +2181,6 @@
   .bg-gray-400 {
     background-color: var(--color-gray-400);
   }
-  .bg-gray-500 {
-    background-color: var(--color-gray-500);
-  }
   .bg-gray-600 {
     background-color: var(--color-gray-600);
   }
@@ -2184,11 +2199,8 @@
       background-color: color-mix(in oklab, var(--color-gray-900) 50%, transparent);
     }
   }
-  .bg-green-600 {
-    background-color: var(--color-green-600);
-  }
-  .bg-green-700 {
-    background-color: var(--color-green-700);
+  .bg-green-500 {
+    background-color: var(--color-green-500);
   }
   .bg-red-500 {
     background-color: var(--color-red-500);
@@ -2260,6 +2272,18 @@
       fill: white !important;
     }
   }
+  .apexcharts-gridline {
+    stroke: var(--color-gray-200) !important;
+    .dark & {
+      stroke: var(--color-gray-700) !important;
+    }
+  }
+  .apexcharts-xcrosshairs {
+    stroke: var(--color-gray-200) !important;
+    .dark & {
+      stroke: var(--color-gray-700) !important;
+    }
+  }
   .apexcharts-ycrosshairs {
     stroke: var(--color-gray-200) !important;
     .dark & {
@@ -2327,6 +2351,9 @@
   .py-8 {
     padding-block: calc(var(--spacing) * 8);
   }
+  .ps-3 {
+    padding-inline-start: calc(var(--spacing) * 3);
+  }
   .ps-10 {
     padding-inline-start: calc(var(--spacing) * 10);
   }
@@ -2374,6 +2401,9 @@
   }
   .text-center {
     text-align: center;
+  }
+  .text-end {
+    text-align: end;
   }
   .font-sans {
     font-family: var(--font-sans);
@@ -2569,6 +2599,9 @@
   .font-stretch-ultra-expanded {
     font-stretch: ultra-expanded;
   }
+  .underline {
+    text-decoration-line: underline;
+  }
   .antialiased {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -2692,10 +2725,24 @@
       }
     }
   }
+  .hover\:bg-green-700 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-green-700);
+      }
+    }
+  }
   .hover\:bg-green-800 {
     &:hover {
       @media (hover: hover) {
         background-color: var(--color-green-800);
+      }
+    }
+  }
+  .hover\:bg-red-700 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-red-700);
       }
     }
   }
@@ -2957,11 +3004,6 @@
   .dark\:bg-blue-600 {
     @media (prefers-color-scheme: dark) {
       background-color: var(--color-blue-600);
-    }
-  }
-  .dark\:bg-blue-700 {
-    @media (prefers-color-scheme: dark) {
-      background-color: var(--color-blue-700);
     }
   }
   .dark\:bg-gray-600 {
