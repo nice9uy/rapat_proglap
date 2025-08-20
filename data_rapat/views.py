@@ -19,14 +19,16 @@ logger = logging.getLogger(__name__)
 def generate_random_id():
     """Generate random 15-character ID (uppercase + digits)"""
     characters = string.ascii_uppercase + string.digits  # A-Z, 0-9
-    return ''.join(random.choices(characters, k=25))
+    return "".join(random.choices(characters, k=32))
+
 
 # Create your views here.
 @login_required(login_url="/accounts/login/")
 def data_rapat(request):
     nama_anggota = list(NamaDb.objects.all().values_list("nama", flat=True))
 
-    data_rapat = list(DataRapatDb.objects.values('id', "id_random"))
+    data_rapat = list(DataRapatDb.objects.all().values("id_random"))
+    # print(data_rapat)
 
     cek_group = list(request.user.groups.all())
     group = [group.name for group in cek_group]
@@ -43,6 +45,7 @@ def data_rapat(request):
 @login_required(login_url="/accounts/login/")
 def data_rapat_api(request):
     try:
+        # Ambil parameter pagination
         try:
             page = int(request.GET.get("page", 1))
             size = int(request.GET.get("size", 15))
@@ -56,78 +59,44 @@ def data_rapat_api(request):
                 {"error": "Page dan size harus lebih besar dari 0"}, status=400
             )
 
-        size = min(size, 100)  # Batasi maksimal 100 per halaman
+        size = min(size, 100)  # Batasi maksimal 100
 
-        base_query = DataRapatDb.objects.all().order_by("tanggal", "id")
-        data_queryset = []
-
-        # Fungsi bantu untuk format Rupiah
-        def format_rupiah(amount):
-            try:
-                amount = float(amount or 0)
-                return f"{amount:,.0f}".replace(",", ".")
-            except (ValueError, TypeError):
-                return "0"
-
-        for obj in base_query:
-            # Format tanggal
-            tanggal_str = ""
-            if obj.tanggal:
-                try:
-                    if isinstance(obj.tanggal, str):
-                        date_obj = datetime.strptime(obj.tanggal, "%Y-%m-%d")
-                    else:
-                        date_obj = obj.tanggal
-                    tanggal_str = date_obj.strftime("%d-%m-%Y")
-                except Exception:
-                    tanggal_str = str(obj.tanggal)
-
-            # Format jam
-            jam_str = ""
-            if obj.jam:
-                try:
-                    if isinstance(obj.jam, str):
-                        time_obj = datetime.strptime(obj.jam, "%H:%M:%S").time()
-                    else:
-                        time_obj = obj.jam
-                    jam_str = time_obj.strftime("%H:%M")
-                except Exception:
-                    jam_str = str(obj.jam or "")
-
-            # Format kas dengan mata uang
-            kas_masuk_formatted = format_rupiah(obj.kas_masuk)
-            kas_keluar_formatted = format_rupiah(obj.kas_keluar)
-
-            data_queryset.append(
-                {
-                    "tanggal": tanggal_str,
-                    "jam": jam_str,
-                    "nama": obj.nama or "",
-                    "judul_kontrak": obj.judul_kontrak or "",
-                    "kas_masuk": kas_masuk_formatted,
-                    "kas_keluar": kas_keluar_formatted,
-                }
-            )
-
-        paginator = Paginator(data_queryset, size)
-        page_obj = paginator.get_page(page)
-        data = list(page_obj.object_list)
-
-        return JsonResponse(
-            {
-                "data": data,
-                "last_page": paginator.num_pages,
-                "total": paginator.count,
-                "current_page": page,
-                "per_page": size,
-            },
-            safe=False,
+        # Query: urutkan dan ambil field penting saja
+        base_queryset = DataRapatDb.objects.all().order_by("tanggal", "id").values(
+            "id_random", "id", "tanggal", "jam", "nama", "judul_kontrak", "kas_masuk", "kas_keluar"
         )
 
+        # Paginasi
+        paginator = Paginator(base_queryset, size)
+        page_obj = paginator.get_page(page)
+
+        # Ambil data mentah (tanpa formatting!)
+        data = []
+        for obj in page_obj.object_list:
+            data.append({
+                "id_random": obj["id_random"],
+                "id": obj["id"],
+                "tanggal": obj["tanggal"],      # ISO format: YYYY-MM-DD
+                "jam": obj["jam"],              # Time object atau string
+                "nama": obj["nama"] or "",
+                "judul_kontrak": obj["judul_kontrak"] or "",
+                "kas_masuk": float(obj["kas_masuk"] or 0),   # Kirim float
+                "kas_keluar": float(obj["kas_keluar"] or 0),
+            })
+
+        return JsonResponse({
+            "data": data,
+            "last_page": paginator.num_pages,
+            "total": paginator.count,
+            "current_page": page,
+            "per_page": size,
+        }, safe=False)
+
     except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
         logger.error(f"Error fetching DataRapatDb list: {e}", exc_info=True)
         return JsonResponse({"error": "Terjadi kesalahan server internal"}, status=500)
-
 
 def tambah_data_rapat(request):
     cek_group = list(request.user.groups.all())
@@ -198,6 +167,7 @@ def tambah_data_rapat(request):
 
         DataRapatDb.objects.create(
             id_nama_anggota=id_nama_anggota,
+            id_random=generate_random_id(),
             tanggal=tanggal_rapat,
             jam=jam_rapat,
             nama=nama,

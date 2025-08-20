@@ -6,7 +6,7 @@ import uuid
 class DataRapatDb(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     id_nama_anggota = models.CharField(max_length=50, null=True, blank=True)
-    id_random = models.CharField(max_length=10, null=True, blank=True)
+    id_random = models.CharField(max_length=32, null=True, blank=True)
     tanggal = models.DateTimeField()
     jam = models.CharField(max_length=10, null=True, blank=True)
     nama = models.CharField(max_length=100, null=True, blank=True)
