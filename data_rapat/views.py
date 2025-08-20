@@ -9,17 +9,16 @@ from tambah_user.models import NamaDb
 from django.contrib import messages
 from django.core.paginator import Paginator
 import logging
-import random
-import string
+
 
 
 logger = logging.getLogger(__name__)
 
 
-def generate_random_id():
-    """Generate random 15-character ID (uppercase + digits)"""
-    characters = string.ascii_uppercase + string.digits  # A-Z, 0-9
-    return "".join(random.choices(characters, k=32))
+# def generate_random_id():
+#     """Generate random 15-character ID (uppercase + digits)"""
+#     characters = string.ascii_uppercase + string.digits  # A-Z, 0-9
+#     return "".join(random.choices(characters, k=32))
 
 
 # Create your views here.
@@ -27,7 +26,7 @@ def generate_random_id():
 def data_rapat(request):
     nama_anggota = list(NamaDb.objects.all().values_list("nama", flat=True))
 
-    data_rapat = list(DataRapatDb.objects.all().values("id_random"))
+    data_rapat = list(DataRapatDb.objects.all().values( "id", "tanggal", "jam", "nama", "judul_kontrak", "kas_masuk", "kas_keluar"))
     # print(data_rapat)
 
     cek_group = list(request.user.groups.all())
@@ -63,7 +62,7 @@ def data_rapat_api(request):
 
         # Query: urutkan dan ambil field penting saja
         base_queryset = DataRapatDb.objects.all().order_by("tanggal", "id").values(
-            "id_random", "id", "tanggal", "jam", "nama", "judul_kontrak", "kas_masuk", "kas_keluar"
+            "id", "tanggal", "jam", "nama", "judul_kontrak", "kas_masuk", "kas_keluar"
         )
 
         # Paginasi
@@ -74,7 +73,6 @@ def data_rapat_api(request):
         data = []
         for obj in page_obj.object_list:
             data.append({
-                "id_random": obj["id_random"],
                 "id": obj["id"],
                 "tanggal": obj["tanggal"],      # ISO format: YYYY-MM-DD
                 "jam": obj["jam"],              # Time object atau string
@@ -98,6 +96,7 @@ def data_rapat_api(request):
         logger.error(f"Error fetching DataRapatDb list: {e}", exc_info=True)
         return JsonResponse({"error": "Terjadi kesalahan server internal"}, status=500)
 
+@login_required(login_url="/accounts/login/")
 def tambah_data_rapat(request):
     cek_group = list(request.user.groups.all())
     group = [group.name for group in cek_group]
@@ -167,7 +166,87 @@ def tambah_data_rapat(request):
 
         DataRapatDb.objects.create(
             id_nama_anggota=id_nama_anggota,
-            id_random=generate_random_id(),
+            tanggal=tanggal_rapat,
+            jam=jam_rapat,
+            nama=nama,
+            judul_kontrak=kontrak,
+            kas_masuk=kas_masuk,
+            kas_keluar=kas_keluar,
+            updated_at=None,
+        )
+        messages.success(request, "Data Rapat berhasil ditambahkan.")
+        return redirect("data_rapat")
+
+@login_required(login_url="/accounts/login/")
+def edit_data_rapat(request):
+    cek_group = list(request.user.groups.all())
+    group = [group.name for group in cek_group]
+
+    # if group == ''
+
+    if request.method == "POST":
+        raw_date = bleach.clean(
+            request.POST.get("tanggal_rapat", "").strip(),
+            tags=[],
+            attributes={},
+            protocols=[],
+            strip=True,
+        )
+
+        tanggal_rapat = datetime.strptime(raw_date, "%d %B %Y").date()
+
+        raw_jam = bleach.clean(
+            request.POST.get("jam_rapat", "").strip(),
+            tags=[],
+            attributes={},
+            protocols=[],
+            strip=True,
+        )
+
+        jam_rapat = time(hour=int(raw_jam), minute=0)  # → 09:00:00
+
+        nama = bleach.clean(
+            str(request.POST.get("nama", "")).upper(),
+            tags=[],
+            attributes={},
+            protocols=[],
+            strip=True,
+        )
+
+        kontrak = bleach.clean(
+            str(request.POST.get("kontrak", "")).upper(),
+            tags=[],
+            attributes={},
+            protocols=[],
+            strip=True,
+        )
+
+        kas_masuk_raw = bleach.clean(
+            (request.POST.get("kas_masuk", "")),
+            tags=[],
+            attributes={},
+            protocols=[],
+            strip=True,
+        )
+
+        kas_masuk = int(kas_masuk_raw.replace(".", ""))
+
+        kas_keluar_raw = bleach.clean(
+            (request.POST.get("kas_keluar", "")),
+            tags=[],
+            attributes={},
+            protocols=[],
+            strip=True,
+        )
+
+        kas_keluar = int(kas_keluar_raw.replace(".", ""))
+
+        id_nama_anggota = list(
+            NamaDb.objects.filter(nama=nama).values_list("id", flat=True)
+        )[0]
+
+        DataRapatDb.objects.create(
+            id_nama_anggota=id_nama_anggota,
             tanggal=tanggal_rapat,
             jam=jam_rapat,
             nama=nama,

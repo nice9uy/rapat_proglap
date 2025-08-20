@@ -7,7 +7,6 @@ class ListDbDataRapat(admin.ModelAdmin):
     list_display = (
         "id",
         "id_nama_anggota",
-        'id_random',
         "tanggal",
         "jam",
         "nama",
