@@ -75,31 +75,31 @@
         </div>
     </div>
 
-{% comment %} <script>
+    <script>
 // Fungsi untuk format input uang
-    function formatUangInput(inputId) {
-        const input = document.getElementById(inputId);
+        function formatUangInput(inputId) {
+            const input = document.getElementById(inputId);
 
-        input.addEventListener('input', function(e) {
-            const element = e.target;
-            const value = element.value.replace(/\D/g, ''); // Hanya angka
-            const cursorPosition = element.selectionStart;
-            const oldLength = element.value.length;
+            input.addEventListener('input', function(e) {
+                const element = e.target;
+                const value = element.value.replace(/\D/g, ''); // Hanya angka
+                const cursorPosition = element.selectionStart;
+                const oldLength = element.value.length;
 
         // Format: 1.000.000
-            const formatted = value ? Number(value).toLocaleString('id-ID') : '';
-            element.value = formatted;
+                const formatted = value ? Number(value).toLocaleString('id-ID') : '';
+                element.value = formatted;
 
         // Perbaiki posisi kursor
-            const newLength = element.value.length;
-            const newCursorPosition = cursorPosition + (newLength - oldLength);
-            element.setSelectionRange(newCursorPosition, newCursorPosition);
-        });
-    }
+                const newLength = element.value.length;
+                const newCursorPosition = cursorPosition + (newLength - oldLength);
+                element.setSelectionRange(newCursorPosition, newCursorPosition);
+            });
+        }
 
 // Terapkan ke kedua input
-    formatUangInput('kas_masuk');
-    formatUangInput('kas_keluar');
-</script> {% endcomment %}
+        formatUangInput('kas_masuk');
+        formatUangInput('kas_keluar');
+    </script>
 {% endif %}
 

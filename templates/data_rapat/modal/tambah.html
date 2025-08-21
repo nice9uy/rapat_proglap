@@ -82,27 +82,4 @@
 {% endif %}
 
 
-<script>
-document.addEventListener('input', function (e) {
-    const id = e.target.id;
-    if (!['kas_masuk', 'kas_keluar'].includes(id)) return;
 
-    let value = e.target.value.replace(/\D/g, '');
-    if (!value) {
-        e.target.value = '';
-        return;
-    }
-    e.target.value = Number(value).toLocaleString('id-ID');
-});
-
-// Format ulang nilai awal saat halaman siap
-document.addEventListener('DOMContentLoaded', function () {
-    ['kas_masuk', 'kas_keluar'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el && el.value) {
-            const raw = el.value.replace(/\D/g, '');
-            if (raw) el.value = Number(raw).toLocaleString('id-ID');
-        }
-    });
-});
-</script>

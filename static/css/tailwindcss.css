@@ -2642,11 +2642,6 @@
       color: var(--color-gray-300);
     }
   }
-  .placeholder\:text-gray-400 {
-    &::placeholder {
-      color: var(--color-gray-400);
-    }
-  }
   .hover\:border-gray-300 {
     &:hover {
       @media (hover: hover) {
