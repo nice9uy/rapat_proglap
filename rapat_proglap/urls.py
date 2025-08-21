@@ -27,5 +27,6 @@ urlpatterns = [
     path("dashboard/", include("dashboard.urls")),
     path("data_rapat/", include("data_rapat.urls")),
     path("tambah_user/", include("tambah_user.urls")),
+     path("belum_diinput/", include("belum_diinput.urls")),
 ]
 

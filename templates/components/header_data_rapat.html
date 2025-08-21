@@ -131,6 +131,10 @@
 
         <ul class="py-1 text-gray-700 dark:text-gray-300" aria-labelledby="dropdown">
           <li>
+            <a href="#" class="block py-2 px-4 text-sm ">WELCOME, {{ user | upper }}</a>
+          </li>
+          <hr>
+          <li>
             <a href="#" onclick="confirmLogout()" class="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold">SIGN OUT</a>
           </li>
         </ul>
@@ -143,7 +147,7 @@
   function confirmLogout() {
     Swal.fire({
       title: 'Apakah Anda yakin?',
-      text: "Anda akan keluar dari Aplikasi ARSIP SURAT!!!",
+      text: "Anda akan keluar dari Aplikasi ini ?",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',

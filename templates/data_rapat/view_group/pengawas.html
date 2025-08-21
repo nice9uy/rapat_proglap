@@ -1,0 +1,105 @@
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        function formatRupiah(amount) {
+            try {
+                const num = parseFloat(amount) || 0;
+                return num.toLocaleString('id-ID'); // Otomatis jadi 1.000.000
+            } catch (e) {
+                return "0";
+            }
+        }
+
+        function formatDate(idDate) {
+            if (!idDate) return "";
+
+            const date = new Date(idDate);
+            if (isNaN(date)) return idDate;
+
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            return new Intl.DateTimeFormat('id-ID', options).format(date);
+        }
+
+        function formatTime(timeStr) {
+            if (!timeStr) return "";
+
+            if (typeof timeStr === "string") {
+                const parts = timeStr.split(":");
+                return `${parts[0]}:${parts[1]}`;
+            }
+
+            if (timeStr instanceof Date) {
+                const hours = timeStr.getHours().toString().padStart(2, '0');
+                const minutes = timeStr.getMinutes().toString().padStart(2, '0');
+                return `${hours}:${minutes}`;
+            }
+
+            return timeStr;
+        }
+
+        var table = new Tabulator("#tabel_data_rapat", {
+            layout: "fitColumns",
+            responsiveLayout: "collapse",
+            ajaxURL: "{% url 'data_rapat_api' %}",
+            placeholder: "Data tidak tersedia",
+            ajaxConfig: "GET",
+            pagination: true,
+            paginationMode: "remote",
+            paginationSize: 15,
+            paginationCounter: "rows",
+
+            columns: [
+                {
+                    title: "NO",
+                    field: "no",
+                    hozAlign: "center",
+                    headerHozAlign: "center",
+                    formatter: function (cell) {
+                        let page = cell.getTable().getPage();
+                        let pageSize = cell.getTable().getPageSize();
+                        return (page - 1) * pageSize + cell.getRow().getPosition(true);
+                    },
+
+                },
+                {
+                    title: "Tanggal",
+                    field: "tanggal",
+                    headerHozAlign: "center",
+                    hozAlign: "center",
+                    formatter: function (cell) {
+                        return formatDate(cell.getValue());
+                    }
+                },
+                {
+                    title: "Jam Rapat",
+                    field: "jam",
+                    headerHozAlign: "center",
+                    hozAlign: "center",
+                    formatter: function (cell) {
+                        return formatTime(cell.getValue());
+                    }
+                },
+                { title: "Nama", field: "nama", headerHozAlign: "center" },
+                { title: "Kontrak", field: "judul_kontrak", headerHozAlign: "center" },
+                {
+                    title: "Masuk",
+                    field: "kas_masuk",
+                    headerHozAlign: "center",
+                    hozAlign: "right",
+                    formatter: function (cell) {
+                        return formatRupiah(cell.getValue());
+                    }
+                },
+                {
+                    title: "Keluar",
+                    field: "kas_keluar",
+                    headerHozAlign: "center",
+                    hozAlign: "right",
+                    formatter: function (cell) {
+                        return formatRupiah(cell.getValue());
+                    }
+                },
+
+            ]
+        });
+    });
+</script>
