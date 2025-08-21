@@ -2184,9 +2184,6 @@
       background-color: color-mix(in oklab, var(--color-gray-900) 50%, transparent);
     }
   }
-  .bg-green-500 {
-    background-color: var(--color-green-500);
-  }
   .bg-green-600 {
     background-color: var(--color-green-600);
   }
@@ -2706,24 +2703,10 @@
       }
     }
   }
-  .hover\:bg-green-700 {
-    &:hover {
-      @media (hover: hover) {
-        background-color: var(--color-green-700);
-      }
-    }
-  }
   .hover\:bg-green-800 {
     &:hover {
       @media (hover: hover) {
         background-color: var(--color-green-800);
-      }
-    }
-  }
-  .hover\:bg-red-700 {
-    &:hover {
-      @media (hover: hover) {
-        background-color: var(--color-red-700);
       }
     }
   }
