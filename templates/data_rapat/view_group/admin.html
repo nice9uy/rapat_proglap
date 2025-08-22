@@ -67,7 +67,9 @@
                     hozAlign: "center",
                     formatter: function (cell) {
                         return formatDate(cell.getValue());
-                    }
+                    },
+                    headerFilter:"input",
+                    headerFilterPlaceholder: "Contoh : 2025-08-30"
                 },
                 {
                     title: "Jam Rapat",
@@ -78,8 +80,8 @@
                         return formatTime(cell.getValue());
                     }
                 },
-                { title: "Nama", field: "nama", headerHozAlign: "center" },
-                { title: "Kontrak", field: "judul_kontrak", headerHozAlign: "center" },
+                { title: "Nama", field: "nama", headerHozAlign: "center" , headerFilter:"input" },
+                { title: "Kontrak", field: "judul_kontrak", headerHozAlign: "center" , headerFilter:"input" },
                 {
                     title: "Masuk",
                     field: "kas_masuk",

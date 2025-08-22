@@ -5,32 +5,36 @@
 
 {% block data_rapat %}
     <div class="antialiased bg-gray-800  ">
-        {% include 'components/header_data_rapat.html' %}
+        {% include 'components/header.html' %}
         <div class="p-4 pt-20">
             <div class="flex text-white text-2xl justify-between">
                 <div class="">
                     DATA RAPAT
                 </div>
-                {% if group == 'ANGGOTA' %}
-                    <button data-modal-target="tambah_rapat_untuk_anggota" data-modal-toggle="tambah_rapat_untuk_anggota" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
-                        TAMBAH RAPAT
-                    </button>
-                {% elif group == 'ADMIN' %}
 
-                    <button data-modal-target="tambah_rapat" data-modal-toggle="tambah_rapat" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
-                        TAMBAH RAPAT
-                    </button>
+                <div>
 
-                {% elif group == 'PENGAWAS' %}
+                    {% if group == 'ANGGOTA' %}
+                        <button data-modal-target="tambah_rapat_untuk_anggota" data-modal-toggle="tambah_rapat_untuk_anggota" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
+                            TAMBAH RAPAT
+                        </button>
+                    {% elif group == 'ADMIN' %}
+
+                        <button data-modal-target="tambah_rapat" data-modal-toggle="tambah_rapat" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
+                            TAMBAH RAPAT
+                        </button>
+
+                    {% elif group == 'PENGAWAS' %}
 
 
-                {% else %}
+                    {% else %}
 
-                    <button data-modal-target="tambah_rapat" data-modal-toggle="tambah_rapat" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
-                        TAMBAH RAPAT
-                    </button>
+                        <button data-modal-target="tambah_rapat" data-modal-toggle="tambah_rapat" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
+                            TAMBAH RAPAT
+                        </button>
 
-                {% endif %}
+                    {% endif %}
+                </div>
             </div>
 
             <div class="mt-3" id="tabel_data_rapat"></div>
@@ -55,7 +59,6 @@
 
                 {% endif %}
 
-
             </div>
         </div>
         {% include 'data_rapat/modal/tambah.html' %}
@@ -63,9 +66,5 @@
         {% include 'data_rapat/modal/edit_rapat.html' %}
         {% include 'data_rapat/modal/edit_nominal.html' %}
         {% include 'copyright.html' %}
-
-
-
-
 
 {% endblock %}

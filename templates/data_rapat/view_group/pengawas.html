@@ -67,7 +67,9 @@
                     hozAlign: "center",
                     formatter: function (cell) {
                         return formatDate(cell.getValue());
-                    }
+                    },
+                    headerFilter:"input",
+                    headerFilterPlaceholder: "Contoh : 2025-08-30"
                 },
                 {
                     title: "Jam Rapat",
@@ -78,8 +80,8 @@
                         return formatTime(cell.getValue());
                     }
                 },
-                { title: "Nama", field: "nama", headerHozAlign: "center" },
-                { title: "Kontrak", field: "judul_kontrak", headerHozAlign: "center" },
+                { title: "Nama", field: "nama", headerHozAlign: "center" , headerFilter:"input" },
+                { title: "Kontrak", field: "judul_kontrak", headerHozAlign: "center" , headerFilter:"input" },
                 {
                     title: "Masuk",
                     field: "kas_masuk",
@@ -98,7 +100,42 @@
                         return formatRupiah(cell.getValue());
                     }
                 },
+                {
+                    title: "AKSI",
+                    field: "actions",
+                    hozAlign: "center",
+                    headerHozAlign: "center",
+                    formatter: function (cell) {
+                        const rowData = cell.getRow().getData();
+                        return `
+                                                <div class="flex space-x-2 justify-center gap-2">
+                                                    <button 
+                                                        data-modal-target="edit_data_rapat${rowData.id}" 
+                                                        data-modal-toggle="edit_data_rapat${rowData.id}" 
+                                                        class="edit_data_rapat bg-green-600 hover:bg-green-800 text-white font-bold py-1 px-2 rounded focus:ring-4 focus:ring-green-300" 
+                                                        title="Edit Data">
+                                                         <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
+                                                        </svg>
+                                                    </button>
+                                                 
+                                                </div>
+                                            `;
+                    },
+                    cellClick: function(e, cell) {
+                        const rowData = cell.getRow().getData();
+                        const btn = e.target.closest("button");
 
+                        if (!btn) return;
+
+                        const isEditData = btn.classList.contains("edit_data_rapat");
+
+                        if (isEditData) {
+                            const modal = document.getElementById(`edit_data_rapat${rowData.id}`);
+                            if (modal) new Modal(modal).show();
+                        }
+                    }
+                }
             ]
         });
     });

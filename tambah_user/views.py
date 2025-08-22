@@ -16,7 +16,9 @@ logger = logging.getLogger(__name__)
 def tambah_user(request):
     nama_user = NamaDb.objects.all().values("id", "nama")
 
-    context = {"page_title": "TAMBAH USER", "nama_user": nama_user}
+    group = ", ".join([group.name for group in request.user.groups.all()])
+
+    context = {"page_title": "TAMBAH USER", "nama_user": nama_user, "group": group}
     return render(request, "tambah_user/index.html", context)
 
 
@@ -111,8 +113,8 @@ def delete_anggota(request, id_delete):
     anggota = get_object_or_404(NamaDb, pk=id_delete)
 
     if request.method == "POST":
-        nama = anggota.nama 
-        anggota.delete()   
+        nama = anggota.nama
+        anggota.delete()
 
         messages.success(
             request,

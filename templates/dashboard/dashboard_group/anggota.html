@@ -1,4 +1,4 @@
-{% comment %} {% extends 'base.html' %}
+{% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
 {% load l10n %}
@@ -7,7 +7,7 @@
   <div class="antialiased bg-gray-800  ">
     {% include 'components/header.html' %}
 
-    <main class="p-4 pt-20 ">
+    {% comment %} <main class="p-4 pt-20 ">
 
       <div class=" mx-auto">
         <div class="grid grid-cols-4 sm:grid-cols-4 gap-4">
@@ -65,12 +65,12 @@
 
         </div>
       </div>
-    </main>
+    </main> {% endcomment %}
   </div>
 
-  <div class="p-4 pt-1">
-    <div class="text-white font-bold ">
-      ANGGOTA YANG RAPAT PALING SEDIKIT  :
+  <div class="p-4 pt-20">
+    <div class="text-white font-sm text-2xl">
+       JUMLAH RAPAT ANGGOTA
     </div>
 
     <div class="mt-3" id="tabel_eselon1"></div>
@@ -132,26 +132,8 @@
     {% include 'copyright.html' %}
     {% comment %} {% else %}
     {% endif %} {% endcomment %}
-  {% comment %} </div> {% endcomment %}
+  </div>
 
 
 
-
-{% if group == 'ANGGOTA' %}
-
-  {% include 'dashboard/dashboard_group/anggota.html' %}
-
-{% elif group == 'ADMIN' %}
-
-  {% include 'dashboard/dashboard_group/admin.html' %}
-
-{% elif group == 'PENGAWAS' %}
-
-  {% include 'dashboard/dashboard_group/pengawas.html' %}
-
-{% else %}
-
-  {% include 'dashboard/dashboard_group/superuser.html' %}
-
-
-{% endif %}
+{% endblock %}

@@ -12,6 +12,8 @@
       <link rel="stylesheet" href="{% static 'css/tabulator_site_dark.min.css' %}" />
       <link rel="stylesheet" href="{% static 'css/tailwindcss.css' %}" />
       <link rel="stylesheet" href="{% static 'css/sweetalert2.min.css' %}" />
+      {% comment %} <link rel="stylesheet" href="{% static 'css/flatpickr.css' %}" /> {% endcomment %}
+
     {% endcompress %}
 
     <link rel="icon" type="image/x-icon" href="{% static 'img/kemhan.png' %}" />
@@ -78,7 +80,9 @@
       <script type="text/javascript" src="{% static 'js/tabulator.min.js' %}"></script>
       <script type="text/javascript" src="{% static 'js/htmx.min.js' %}"></script>
       <script type="text/javascript" src="{% static 'js/flowbite.min.js' %}" defer ></script>
-      {% comment %} <script type="text/javascript" src="{% static 'js/chart.min.js' %}" defer ></script> {% endcomment %}
+      <script type="text/javascript" src="{% static 'js/flatpickr.js' %}" defer ></script>
+      {% comment %} <script type="text/javascript" src="{% static 'js/flatpickr_id.js' %}" defer ></script> {% endcomment %}
+
 
     <!-- SweetAlert Trigger -->
       <script>
