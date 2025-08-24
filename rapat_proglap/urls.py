@@ -28,5 +28,7 @@ urlpatterns = [
     path("data_rapat/", include("data_rapat.urls")),
     path("tambah_user/", include("tambah_user.urls")),
      path("belum_diinput/", include("belum_diinput.urls")),
+          path("perubahan_data/", include("perubahan_data.urls")),
+
 ]
 

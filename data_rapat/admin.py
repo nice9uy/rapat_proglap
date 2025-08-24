@@ -14,7 +14,8 @@ class ListDbDataRapat(admin.ModelAdmin):
         "kas_masuk",
         "kas_keluar",
         "created_at",
-        "updated_at",
+        "tanggal_update",
+        "jam_update"
     )
 
 admin.site.register(DataRapatDb, ListDbDataRapat)

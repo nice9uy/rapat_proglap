@@ -70,53 +70,46 @@
 
   <div class="p-4 pt-1">
     <div class="text-white font-bold ">
-      JUMLAH RAPAT ANGGOTA
+      JUMLAH RAPAT ANGGOTA {{ bulan_ini | date:"F Y" }}
     </div>
 
-    <div class="mt-3" id="tabel_eselon1"></div>
+    <div class="mt-3" id="tabel_dashboard"></div>
     <div class="mx-auto">
+
+
       <script>
         document.addEventListener("DOMContentLoaded", function () {
-          var table = new Tabulator("#tabel_eselon1", {
+          var table = new Tabulator("#tabel_dashboard", {
+            data: {{data | safe }},
             layout: "fitColumns",
             responsiveLayout: "collapse",
-            ajaxURL: "",
-            ajaxParams: {
-              page: 1,
-              size: 15,
+            initialSort:[             //set the initial sort order of the data
+              {column:"jumlah_perbulan", dir:"dec"},
+            ],
+            columnDefaults:{
+              tooltip:true,         //show tool tips on cells
             },
-            ajaxConfig: "GET",
-            pagination: true,
-            paginationMode: "local", // fetch page dari server
-
             placeholder: "Data tidak tersedia",
 
             columns: [
               {
-                title: "No ",
-                field: "nama_satker_lengkap",
-                headerHozAlign: "center"
+                title: "NO",
+                field: "no",
+                width: 60,
+                hozAlign: "center",
+                formatter: function(cell) {
+                  let row = cell.getRow();
+                  let table = row.getTable();
+                  let page = table.getPage();
+                  let pageSize = table.getPageSize();
+                  return ((page - 1) * pageSize) + row.getPosition();
+                }
               },
-
-              {
-                title: "NAMA ",
-                field: "nama_satker_lengkap",
-                headerHozAlign: "center"
-              },
-              {
-                title: "JUMLAH RAPAT BULAN INI",
-                field: "nama_satker_lengkap",
-                headerHozAlign: "center"
-              },
-              {
-                title: "TOTAL RAPAT",
-                field: "nama_satker_lengkap",
-                headerHozAlign: "center"
-              },
-
+              { title: "NAMA", field: "nama", headerHozAlign: "center" },
+              { title: "BULAN INI", field: "jumlah_perbulan", headerHozAlign: "center", hozAlign: "center"},
+              { title: "TAHUN INI", field: "jumlah_keseluruhan", headerHozAlign: "center",  formatter:"progress"},
             ],
 
-        // Opsional: log error pagination
             ajaxError: function(xhr, textStatus, errorThrown) {
               console.error("Ajax Error:", textStatus, errorThrown);
             }

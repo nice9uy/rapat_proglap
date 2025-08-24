@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load l10n %}
+
+{% block belum_diinput %}
+
+    <div class="antialiased bg-gray-800  ">
+        {% include 'components/header.html' %}
+
+        <div class="p-4 pt-20">
+            <div class="flex text-white text-2xl justify-between">
+                <div>PERUBAHAN DATA</div>
+
+            </div>
+            <div class="mt-3" id="table_belum_diinput"></div>
+            <div class="mx-auto">
+
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        function formatRupiah(amount) {
+                            try {
+                                const num = parseFloat(amount) || 0;
+                                return num.toLocaleString('id-ID'); // Otomatis jadi 1.000.000
+                            } catch (e) {
+                                return "0";
+                            }
+                        }
+
+                        function formatDate(idDate) {
+                            if (!idDate) return "";
+
+                            const date = new Date(idDate);
+                            if (isNaN(date)) return idDate;
+
+                            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+                            return new Intl.DateTimeFormat('id-ID', options).format(date);
+                        }
+
+                        function formatTime(timeStr) {
+                            if (!timeStr) return "";
+
+                            if (typeof timeStr === "string") {
+                                const parts = timeStr.split(":");
+                                return `${parts[0]}:${parts[1]}`;
+                            }
+
+                            if (timeStr instanceof Date) {
+                                const hours = timeStr.getHours().toString().padStart(2, '0');
+                                const minutes = timeStr.getMinutes().toString().padStart(2, '0');
+                                return `${hours}:${minutes}`;
+                            }
+
+                            return timeStr;
+                        }
+
+                        var table = new Tabulator("#table_belum_diinput", {
+                            layout: "fitColumns",
+                            responsiveLayout: "collapse",
+                            ajaxURL: "{% url 'belum_diinput_api' %}",
+                            placeholder: "Data tidak tersedia",
+                            ajaxConfig: "GET",
+                            pagination: true,
+                            paginationMode: "remote",
+                            paginationSize: 15,
+                            paginationCounter: "rows",
+
+                            columns: [
+                                {
+                                    title: "NO",
+                                    field: "no",
+                                    hozAlign: "center",
+                                    headerHozAlign: "center",
+                                    formatter: function (cell) {
+                                        let page = cell.getTable().getPage();
+                                        let pageSize = cell.getTable().getPageSize();
+                                        return (page - 1) * pageSize + cell.getRow().getPosition(true);
+                                    },
+
+                                },
+                                { title: "ID", field: "nama", headerHozAlign: "center"},
+
+                                {
+                                    title: "Tanggal",
+                                    field: "tanggal",
+                                    headerHozAlign: "center",
+                                    hozAlign: "center",
+                                    formatter: function (cell) {
+                                        return formatDate(cell.getValue());
+                                    },
+                                    headerFilter:"input",
+                                    headerFilterPlaceholder: "Contoh : 2025-08-30"
+                                },
+                                { title: "JAM", field: "nama", headerHozAlign: "center" },
+                                { title: "KETERANGAN", field: "nama", headerHozAlign: "center" },
+
+
+
+                            ]
+                        });
+                    });
+                </script>
+
+            </div>
+
+        </div>
+
+
+        {% include 'belum_diinput/modal/edit_data_rapat.html' %}
+        {% include 'belum_diinput/modal/edit_nominal.html' %}
+
+        {% include 'copyright.html' %}
+
+
+
+{% endblock %}

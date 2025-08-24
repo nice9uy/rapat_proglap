@@ -3,30 +3,62 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from data_rapat.models import DataRapatDb
 from tambah_user.models import NamaDb
-# import json
+from django.utils import timezone
 
 
 @login_required(login_url="/accounts/login/")
 def dashboard(request):
-    data = []
     user = request.user.username
-    group = ', '.join([group.name for group in request.user.groups.all()])
+    group = ", ".join([group.name for group in request.user.groups.all()])
 
-    anggota_yang_rapat = list(NamaDb.objects.all().values('id', 'nama'))
+    sekarang = timezone.now()
+    bulan_sekarang = sekarang.month
+    tahun_sekarang = sekarang.year
 
+    anggota_list = NamaDb.objects.all()
 
-    print(anggota_yang_rapat)
+    rapat_bulanan = DataRapatDb.objects.filter(tanggal__month=bulan_sekarang)
+    semua_rapat = DataRapatDb.objects.filter(tanggal__year=tahun_sekarang)
 
-    # for anggota in anggota_yang_rapat:
-    #     cek_anggota = DataRapatDb.objects.filter('')
+    data = []
+    for anggota in anggota_list:
+        nama_anggota = anggota.nama
+        jumlah_perbulan = rapat_bulanan.filter(nama=nama_anggota).count()
+        jumlah_keseluruhan = semua_rapat.filter(nama=nama_anggota).count()
 
-    # print(user)
-   
-    context = { 
-        'page_title': "DASHBOARD", 
-        'bulan_ini' : datetime.now(),
-        'group' : group,
-        'user' : user
+        data.append({
+            'id': anggota.id,
+            'nama': nama_anggota,
+            'jumlah_perbulan': jumlah_perbulan,
+            'jumlah_keseluruhan': jumlah_keseluruhan,
+
+        })
+
+    context = {
+        "page_title": "DASHBOARD",
+        "bulan_ini": datetime.now(),
+        "group": group,
+        "user": user,
+        'data' :data
     }
 
-    return render(request, 'dashboard/index.html' , context )
+    return render(request, "dashboard/index.html", context)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

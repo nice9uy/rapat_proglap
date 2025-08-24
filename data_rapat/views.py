@@ -4,11 +4,15 @@ from django.contrib.auth.decorators import login_required
 import bleach
 from datetime import time
 from django.http import JsonResponse
+
+from perubahan_data.models import PerubahanData
 from .models import DataRapatDb
 from tambah_user.models import NamaDb
 from django.contrib import messages
 from django.core.paginator import Paginator
 import logging
+from django.db import transaction
+
 
 logger = logging.getLogger(__name__)
 
@@ -17,8 +21,8 @@ logger = logging.getLogger(__name__)
 @login_required(login_url="/accounts/login/")
 def data_rapat(request):
     nama_anggota = list(NamaDb.objects.all().values_list("nama", flat=True))
-    user = request.user.username
-
+    user = request.user
+    # print(user)
 
     data_rapat = list(
         DataRapatDb.objects.all().values(
@@ -26,7 +30,7 @@ def data_rapat(request):
         )
     )
 
-    group = ', '.join([group.name for group in request.user.groups.all()])
+    group = ", ".join([group.name for group in request.user.groups.all()])
 
     # print(group)
 
@@ -35,7 +39,7 @@ def data_rapat(request):
         "nama_anggota": nama_anggota,
         "group": group,
         "data_rapat": data_rapat,
-        'user' : user
+        "user": user,
     }
     return render(request, "data_rapat/index.html", context)
 
@@ -114,13 +118,9 @@ def data_rapat_api(request):
 
 @login_required(login_url="/accounts/login/")
 def tambah_data_rapat(request):
-    # cek_group = list(request.user.groups.all())
-    # group = [group.name for group in cek_group]
-
-    # if group == ''
-    group = ', '.join([group.name for group in request.user.groups.all()])
-
-
+    group = ", ".join([group.name for group in request.user.groups.all()])
+    # tgl_sekarang = datetime.now().date()
+    # jam_sekarang = datetime.now().strftime("%H:%M:%S")
     if request.method == "POST":
         raw_date = bleach.clean(
             request.POST.get("tanggal_rapat", "").strip(),
@@ -159,7 +159,7 @@ def tambah_data_rapat(request):
             strip=True,
         )
 
-        if group == "ADMIN" :  
+        if request.user.is_superuser:
             kas_masuk_raw = bleach.clean(
                 (request.POST.get("kas_masuk", "")),
                 tags=[],
@@ -192,75 +192,75 @@ def tambah_data_rapat(request):
                 judul_kontrak=kontrak,
                 kas_masuk=kas_masuk,
                 kas_keluar=kas_keluar,
-                updated_at=None,
             )
             messages.success(request, "Data Rapat berhasil ditambahkan.")
             return redirect("data_rapat")
-        
-        elif group == 'ANGGOTA':
-    
-            id_nama_anggota = list(
-                NamaDb.objects.filter(nama=nama).values_list("id", flat=True)
-            )[0]
 
-            DataRapatDb.objects.create(
-                id_nama_anggota=id_nama_anggota,
-                tanggal=tanggal_rapat,
-                jam=jam,
-                nama=nama,
-                judul_kontrak=kontrak,
-                updated_at=None,
-            )
-            messages.success(request, "Data Rapat berhasil ditambahkan.")
-            return redirect("data_rapat")
-        
         else:
-            kas_masuk_raw = bleach.clean(
-                (request.POST.get("kas_masuk", "")),
-                tags=[],
-                attributes={},
-                protocols=[],
-                strip=True,
-            )
+            if group == "ADMIN":
+                kas_masuk_raw = bleach.clean(
+                    (request.POST.get("kas_masuk", "")),
+                    tags=[],
+                    attributes={},
+                    protocols=[],
+                    strip=True,
+                )
 
-            kas_masuk = int(kas_masuk_raw.replace(".", ""))
+                kas_masuk = int(kas_masuk_raw.replace(".", ""))
 
-            kas_keluar_raw = bleach.clean(
-                (request.POST.get("kas_keluar", "")),
-                tags=[],
-                attributes={},
-                protocols=[],
-                strip=True,
-            )
+                kas_keluar_raw = bleach.clean(
+                    (request.POST.get("kas_keluar", "")),
+                    tags=[],
+                    attributes={},
+                    protocols=[],
+                    strip=True,
+                )
 
-            kas_keluar = int(kas_keluar_raw.replace(".", ""))
+                kas_keluar = int(kas_keluar_raw.replace(".", ""))
 
-            id_nama_anggota = list(
-                NamaDb.objects.filter(nama=nama).values_list("id", flat=True)
-            )[0]
+                id_nama_anggota = list(
+                    NamaDb.objects.filter(nama=nama).values_list("id", flat=True)
+                )[0]
 
-            DataRapatDb.objects.create(
-                id_nama_anggota=id_nama_anggota,
-                tanggal=tanggal_rapat,
-                jam=jam,
-                nama=nama,
-                judul_kontrak=kontrak,
-                kas_masuk=kas_masuk,
-                kas_keluar=kas_keluar,
-                updated_at=None,
-            )
-            messages.success(request, "Data Rapat berhasil ditambahkan.")
-            return redirect("data_rapat")
+                DataRapatDb.objects.create(
+                    id_nama_anggota=id_nama_anggota,
+                    tanggal=tanggal_rapat,
+                    jam=jam,
+                    nama=nama,
+                    judul_kontrak=kontrak,
+                    kas_masuk=kas_masuk,
+                    kas_keluar=kas_keluar,
+                 
+                )
+                messages.success(request, "Data Rapat berhasil ditambahkan.")
+                return redirect("data_rapat")
+
+            elif group == "ANGGOTA":
+                id_nama_anggota = list(
+                    NamaDb.objects.filter(nama=nama).values_list("id", flat=True)
+                )[0]
+
+                DataRapatDb.objects.create(
+                    id_nama_anggota=id_nama_anggota,
+                    tanggal=tanggal_rapat,
+                    jam=jam,
+                    nama=nama,
+                    judul_kontrak=kontrak,
+                )
+                messages.success(request, "Data Rapat berhasil ditambahkan.")
+                return redirect("data_rapat")
+
+            else:
+                return redirect("data_rapat")
+
 
 @login_required(login_url="/accounts/login/")
 def edit_data_rapat(request, rapat_id):
     data_rapat = get_object_or_404(DataRapatDb, pk=rapat_id)
 
-    group = ', '.join([group.name for group in request.user.groups.all()])
-
+    group = ", ".join([group.name for group in request.user.groups.all()])
 
     if request.method == "POST":
-
         raw_date = bleach.clean(
             request.POST.get("tanggal_rapat", "").strip(),
             tags=[],
@@ -322,8 +322,7 @@ def edit_data_rapat(request, rapat_id):
             NamaDb.objects.filter(nama=nama).values_list("id", flat=True).first()
         )
 
-        if group == "ADMIN": 
-
+        if request.user.is_superuser:
             if jam_formatted != "":
                 data_rapat.id_nama_anggota = id_nama_anggota
                 data_rapat.tanggal = tanggal_rapat
@@ -337,33 +336,106 @@ def edit_data_rapat(request, rapat_id):
             else:
                 messages.success(request, "Jam Harap di isi")
                 return redirect("data_rapat")
-            
-        elif group == 'ANGGOTA' : 
-            if jam_formatted != "":
-                data_rapat.id_nama_anggota = id_nama_anggota
-                data_rapat.tanggal = tanggal_rapat
-                data_rapat.jam = jam_formatted
-                data_rapat.judul_kontrak = kontrak
-                data_rapat.save()
 
-                messages.success(request, "Data Rapat berhasil diedit.")
-                return redirect("data_rapat")
-            else:
-                messages.success(request, "Jam Harap di isi")
-                return redirect("data_rapat")
         else:
-            if jam_formatted != "":
-                data_rapat.id_nama_anggota = id_nama_anggota
-                data_rapat.tanggal = tanggal_rapat
-                data_rapat.jam = jam_formatted
-                data_rapat.nama = nama
-                data_rapat.judul_kontrak = kontrak
-                data_rapat.save()
+            if group == "ADMIN":
+                if jam_formatted != "":
+                    data_rapat.id_nama_anggota = id_nama_anggota
+                    data_rapat.tanggal = tanggal_rapat
+                    data_rapat.jam = jam_formatted
+                    data_rapat.nama = nama
+                    data_rapat.judul_kontrak = kontrak
+                    data_rapat.save()
 
-                messages.success(request, "Data Rapat berhasil diedit.")
-                return redirect("data_rapat")
+                    messages.success(request, "Data Rapat berhasil diedit.")
+                    return redirect("data_rapat")
+                else:
+                    messages.success(request, "Jam Harap di isi")
+                    return redirect("data_rapat")
+
+            elif group == "ANGGOTA":
+                if jam_formatted != "":
+                    data_rapat.id_nama_anggota = id_nama_anggota
+                    data_rapat.tanggal = tanggal_rapat
+                    data_rapat.jam = jam_formatted
+                    data_rapat.judul_kontrak = kontrak
+                    data_rapat.save()
+
+                    messages.success(request, "Data Rapat berhasil diedit.")
+                    return redirect("data_rapat")
+                else:
+                    messages.success(request, "Jam Harap di isi")
+                    return redirect("data_rapat")
             else:
-                messages.success(request, "Jam Harap di isi")
-                return redirect("data_rapat")
+                if jam_formatted != "":
+                    data_rapat.id_nama_anggota = id_nama_anggota
+                    data_rapat.tanggal = tanggal_rapat
+                    data_rapat.jam = jam_formatted
+                    data_rapat.nama = nama
+                    data_rapat.judul_kontrak = kontrak
+                    data_rapat.save()
+
+                    messages.success(request, "Data Rapat berhasil diedit.")
+                    return redirect("data_rapat")
+                else:
+                    messages.success(request, "Jam Harap di isi")
+                    return redirect("data_rapat")
 
     return redirect("data_rapat")
+
+
+@login_required(login_url="/accounts/login/")
+def edit_data_nominal(request, rapat_id):
+    data_rapat = get_object_or_404(DataRapatDb, pk=rapat_id)
+    tgl_sekarang = datetime.now().date()
+    jam_sekarang = datetime.now().strftime("%H:%M:%S")
+
+    try:
+        cek_update = data_rapat.tanggal_update
+    except Exception:
+        cek_update = None
+
+    if cek_update is None:
+        if request.method == "POST":
+            kas_masuk_raw = bleach.clean(
+                (request.POST.get("kas_masuk", "")),
+                tags=[],
+                attributes={},
+                protocols=[],
+                strip=True,
+            )
+
+            kas_masuk = int(kas_masuk_raw.replace(".", ""))
+
+            kas_keluar_raw = bleach.clean(
+                (request.POST.get("kas_keluar", "")),
+                tags=[],
+                attributes={},
+                protocols=[],
+                strip=True,
+            )
+
+            kas_keluar = int(kas_keluar_raw.replace(".", ""))
+
+            try:
+                with transaction.atomic():
+                    data_rapat.kas_masuk = kas_masuk
+                    data_rapat.kas_keluar = kas_keluar
+                    data_rapat.tanggal_update = tgl_sekarang
+                    data_rapat.jam_update = jam_sekarang
+                    data_rapat.save()
+
+                    PerubahanData.objects.create(
+                        id_database=data_rapat.id,
+                        no_kontrak=data_rapat.judul_kontrak,
+                        tanggal=tgl_sekarang,
+                        jam=jam_sekarang,
+                        keterangan="tttt",
+                    )
+
+                messages.success(request, "Data Rapat berhasil diedit.")
+                return redirect("data_rapat")
+
+            except Exception as e:
+                messages.success(request, f"Data Rapat gagal diinput karena : {e}")
+                return redirect("data_rapat")

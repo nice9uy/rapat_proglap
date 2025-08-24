@@ -29,9 +29,9 @@
 
                     {% else %}
 
-                        <button data-modal-target="tambah_rapat" data-modal-toggle="tambah_rapat" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
+                        {% comment %} <button data-modal-target="tambah_rapat" data-modal-toggle="tambah_rapat" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
                             TAMBAH RAPAT
-                        </button>
+                        </button> {% endcomment %}
 
                     {% endif %}
                 </div>
@@ -54,7 +54,7 @@
 
                 {% else %}
 
-                    {% include 'data_rapat/view_group/admin.html' %}
+                    {% include 'data_rapat/view_group/superuser.html' %}
 
 
                 {% endif %}

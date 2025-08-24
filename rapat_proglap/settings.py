@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'data_rapat',
     'tambah_user',
     'belum_diinput',
+    'perubahan_data',
     
 ]
 
