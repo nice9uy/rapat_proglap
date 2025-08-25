@@ -10,6 +10,7 @@ class ListDbDataRapat(admin.ModelAdmin):
         "tanggal",
         "jam",
         "nama",
+        "judul_surat",
         "judul_kontrak",
         "kas_masuk",
         "kas_keluar",

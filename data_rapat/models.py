@@ -8,6 +8,7 @@ class DataRapatDb(models.Model):
     tanggal = models.DateField()
     jam = models.CharField(max_length=10, null=True, blank=True)
     nama = models.CharField(max_length=100, null=True, blank=True)
+    judul_surat = models.CharField(max_length=100, null=True, blank=True)
     judul_kontrak = models.CharField(max_length=100, null=True, blank=True)
     kas_masuk = models.IntegerField(default=0)
     kas_keluar = models.IntegerField(default=0)

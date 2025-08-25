@@ -18,12 +18,13 @@
                     </button>
                 </div>
                     <!-- Modal body -->
-                <form class="p-4 md:p-5" method="POST" action="" >
+                <form class="p-4 md:p-5" method="POST" action="{% url 'edit_nominal_belom_diinput'  data.id %}">
                     {% csrf_token %}
                     <div class="grid gap-4 mb-4 grid-cols-2">
                         <div class="col-span-2">
                             <label class="block mb-1 mt-2 text-sm font-medium text-white">KAS MASUK</label>
                             <input
+                                name="kas_masuk_belum_diinput"
                                 type="text"
                                 class="text-end bg-gray-600 border border-gray-300 text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                                 value="{{ data.kas_masuk|format_rupiah }}"
@@ -34,9 +35,9 @@
                                 required>
                             <input type="hidden" name="kas_masuk" value="{{ data.kas_masuk }}">
 
-<!-- KAS KELUAR -->
                             <label class="block mb-1 mt-2 text-sm font-medium text-white">KAS KELUAR</label>
                             <input
+                                name="kas_keluar_belum_diinput"
                                 type="text"
                                 class="text-end bg-gray-600 border border-gray-300 text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                                 value="{{ data.kas_keluar|format_rupiah }}"

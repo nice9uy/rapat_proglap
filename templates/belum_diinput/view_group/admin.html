@@ -125,15 +125,7 @@
                                         const rowData = cell.getRow().getData();
                                         return `
                                                 <div class="flex space-x-2 justify-center gap-2">
-                                                    <button 
-                                                        data-modal-target="edit_data_belum_input${rowData.id}" 
-                                                        data-modal-toggle="edit_data_belum_input${rowData.id}" 
-                                                        class="edit_data_belum_input bg-green-600 hover:bg-green-800 text-white font-bold py-1 px-2 rounded focus:ring-4 focus:ring-green-300" 
-                                                        title="Edit Data">
-                                                         <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
-                                                        </svg>
-                                                    </button>
+                                            
                                                     <button 
                                                         data-modal-target="edit_nominal_belum_input${rowData.id}" 
                                                         data-modal-toggle="edit_nominal_belum_input${rowData.id}" 
@@ -152,13 +144,9 @@
 
                                         if (!btn) return;
 
-                                        const isEditData = btn.classList.contains("edit_data_belum_input");
                                         const isEditNominal = btn.classList.contains("edit_nominal_belum_input");
 
-                                        if (isEditData) {
-                                            const modal = document.getElementById(`edit_data_belum_input${rowData.id}`);
-                                            if (modal) new Modal(modal).show();
-                                        }
+
 
                                         if (isEditNominal) {
                                             const modal = document.getElementById(`edit_nominal_belum_input${rowData.id}`);
@@ -174,9 +162,7 @@
             </div>
 
         </div>
-    {% comment %} {% include 'tambah_user/modal/tambah.html' %}
-    {% include 'tambah_user/modal/edit.html' %}
-    {% include 'tambah_user/modal/delete.html' %} {% endcomment %}
+
 
         {% include 'belum_diinput/modal/edit_data_rapat.html' %}
         {% include 'belum_diinput/modal/edit_nominal.html' %}
