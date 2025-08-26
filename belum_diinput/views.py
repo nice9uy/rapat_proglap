@@ -17,7 +17,14 @@ def belum_diinput(request):
 
     data_rapat = list(
         DataRapatDb.objects.all().values(
-            "id", "tanggal", "jam", "nama", "judul_kontrak", "kas_masuk", "kas_keluar"
+            "id",
+            "tanggal",
+            "jam",
+            "nama",
+            "judul_surat",
+            "judul_kontrak",
+            "kas_masuk",
+            "kas_keluar",
         )
     )
 
@@ -59,6 +66,7 @@ def belum_diinput_api(request):
                 "tanggal",
                 "jam",
                 "nama",
+                "judul_surat",
                 "judul_kontrak",
                 "kas_masuk",
                 "kas_keluar",
@@ -78,6 +86,7 @@ def belum_diinput_api(request):
                     "tanggal": obj["tanggal"],  # ISO format: YYYY-MM-DD
                     "jam": obj["jam"],  # Time object atau string
                     "nama": obj["nama"] or "",
+                    "judul_surat": obj["judul_surat"] or "",
                     "judul_kontrak": obj["judul_kontrak"] or "",
                     "kas_masuk": float(obj["kas_masuk"] or 0),  # Kirim float
                     "kas_keluar": float(obj["kas_keluar"] or 0),
@@ -139,8 +148,10 @@ def edit_nominal_belom_diinput(request, rapat_id):
             data_rapat.tanggal_update = tgl_sekarang
             data_rapat.jam_update = jam_sekarang
             data_rapat.save()
+
             messages.success(request, "Kas Berhasil di Input.")
             return redirect("belum_diinput")
+        
         else:
             messages.warning(request, "Nominal Belum diinput!!!")
             return redirect("belum_diinput")

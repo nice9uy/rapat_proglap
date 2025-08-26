@@ -75,14 +75,15 @@
 
     <div class="mt-3" id="tabel_dashboard"></div>
     <div class="mx-auto">
-      <script>
+     <script>
         document.addEventListener("DOMContentLoaded", function () {
           var table = new Tabulator("#tabel_dashboard", {
             data: {{data | safe }},
             layout: "fitColumns",
             responsiveLayout: "collapse",
+            
             initialSort:[             //set the initial sort order of the data
-              {column:"jumlah_perbulan", dir:"dec"},
+              {column:"jumlah_perbulan", dir:"desc"},
             ],
             columnDefaults:{
               tooltip:true,         //show tool tips on cells
@@ -113,7 +114,8 @@
             }
           });
         });
-      </script>
+      </script> 
+
 
     </div>
 
