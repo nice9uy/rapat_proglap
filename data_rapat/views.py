@@ -1,13 +1,10 @@
 from datetime import datetime
-import json
-from django.utils import timezone
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 import bleach
 from datetime import time
 from django.http import JsonResponse
 
-from dashboard.models import DashboardDb
 from perubahan_data.models import PerubahanData
 from .models import DataRapatDb
 from tambah_user.models import NamaDb
@@ -135,34 +132,36 @@ def tambah_data_rapat(request):
     jam_sekarang = datetime.now().strftime("%H:%M:%S")
 
     ### UNTUK  DASHBOARD ###################
-    DashboardDb.objects.all().delete()
+    # DashboardDb.objects.all().delete()
 
-    data = []
-    sekarang = timezone.now()
-    bulan_sekarang = sekarang.month
-    tahun_sekarang = sekarang.year
+    # data = []
+    # sekarang = timezone.now()
+    # bulan_sekarang = sekarang.month
+    # tahun_sekarang = sekarang.year
 
-    anggota_list = NamaDb.objects.all()
+    # anggota_list = NamaDb.objects.all()
 
-    rapat_bulanan = DataRapatDb.objects.filter(tanggal__month=bulan_sekarang)
-    semua_rapat = DataRapatDb.objects.filter(tanggal__year=tahun_sekarang)
+    # rapat_bulanan = DataRapatDb.objects.filter(tanggal__month=bulan_sekarang)
+    # semua_rapat = DataRapatDb.objects.filter(tanggal__year=tahun_sekarang)
 
-    for anggota in anggota_list:
-        nama_anggota = anggota.nama
-        jumlah_perbulan = rapat_bulanan.filter(nama=nama_anggota).count()
-        jumlah_keseluruhan = semua_rapat.filter(nama=nama_anggota).count()
+    # for anggota in anggota_list:
+    #     nama_anggota = anggota.nama
+    #     jumlah_perbulan = rapat_bulanan.filter(nama=nama_anggota).count()
+    #     jumlah_keseluruhan = semua_rapat.filter(nama=nama_anggota).count()
 
-        data.append(
-            {
-                "id": anggota.id,
-                "nama": nama_anggota,
-                "jumlah_perbulan": jumlah_perbulan,
-                "jumlah_keseluruhan": jumlah_keseluruhan,
-            }
-        )
+    #     data.append(
+    #         {
+    #             "id": anggota.id,
+    #             "nama": nama_anggota,
+    #             "jumlah_perbulan": jumlah_perbulan,
+    #             "jumlah_keseluruhan": jumlah_keseluruhan,
+    #         }
+    #     )
 
-    data_sorted = sorted(data, key=lambda x: x["jumlah_perbulan"], reverse=True)
-    data_json = json.dumps(data_sorted)
+    # data_sorted = sorted(data, key=lambda x: x["jumlah_perbulan"], reverse=True)
+    # data_json = json.loads(data_sorted)
+
+    # print(data_json)
 
     ##########################################
 
@@ -237,25 +236,38 @@ def tambah_data_rapat(request):
                 NamaDb.objects.filter(nama=nama).values_list("id", flat=True)
             )[0]
 
-            DataRapatDb.objects.create(
-                id_nama_anggota=id_nama_anggota,
-                tanggal=tanggal_rapat,
-                jam=jam,
-                nama=nama,
-                judul_surat=surat,
-                judul_kontrak=kontrak,
-                kas_masuk=kas_masuk,
-                kas_keluar=kas_keluar,
-            )
-            for item in data_json:
-                DashboardDb.objects.update_or_create(
-                    nama=item["nama"],
-                    defaults={
-                        "bulan_ini": item["jumlah_perbulan"],
-                        "tahun_ini": item["jumlah_keseluruhan"],
-                    },
+            with transaction.atomic():
+                DataRapatDb.objects.create(
+                    id_nama_anggota=id_nama_anggota,
+                    tanggal=tanggal_rapat,
+                    jam=jam,
+                    nama=nama,
+                    judul_surat=surat,
+                    judul_kontrak=kontrak,
+                    kas_masuk=kas_masuk,
+                    kas_keluar=kas_keluar,
                 )
-            messages.success(request, "Data Rapat berhasil ditambahkan.")
+
+                # for item in data_json:
+                #     DashboardDb.objects.update_or_create(
+                #         nama=item["nama"],
+                #         defaults={
+                #             "bulan_ini": item["jumlah_perbulan"],
+                #             "tahun_ini": item["jumlah_keseluruhan"],
+                #         },
+                #     )
+
+
+                # for item in data_sorted:
+                #     DashboardDb.objects.update_or_create(
+                #         anggota_id=item["id"],  # unique key
+                #         defaults={
+                #             "nama": item["nama"],
+                #             "bulan_ini": item["jumlah_perbulan"],
+                #             "tahun_ini": item["jumlah_keseluruhan"],
+                #         },
+                #     )
+                messages.success(request, "Data Rapat berhasil ditambahkan.")
 
             return redirect("data_rapat")
 
@@ -301,14 +313,14 @@ def tambah_data_rapat(request):
                     jam_update=jam_sekarang,
                 )
 
-                for item in data_json:
-                    DashboardDb.objects.update_or_create(
-                        nama=item["nama"],
-                        defaults={
-                            "bulan_ini": item["jumlah_perbulan"],
-                            "tahun_ini": item["jumlah_keseluruhan"],
-                        },
-                    )
+                # for item in data_json:
+                #     DashboardDb.objects.update_or_create(
+                #         nama=item["nama"],
+                #         defaults={
+                #             "bulan_ini": item["jumlah_perbulan"],
+                #             "tahun_ini": item["jumlah_keseluruhan"],
+                #         },
+                #     )
 
                 messages.success(request, "Data Rapat berhasil ditambahkan.")
                 return redirect("data_rapat")
@@ -326,14 +338,14 @@ def tambah_data_rapat(request):
                     judul_surat=surat,
                     judul_kontrak=kontrak,
                 )
-                for item in data_json:
-                    DashboardDb.objects.update_or_create(
-                        nama=item["nama"],
-                        defaults={
-                            "bulan_ini": item["jumlah_perbulan"],
-                            "tahun_ini": item["jumlah_keseluruhan"],
-                        },
-                    )
+                # for item in data_json:
+                #     DashboardDb.objects.update_or_create(
+                #         nama=item["nama"],
+                #         defaults={
+                #             "bulan_ini": item["jumlah_perbulan"],
+                #             "tahun_ini": item["jumlah_keseluruhan"],
+                #         },
+                #     )
                 messages.success(request, "Data Rapat berhasil ditambahkan.")
                 return redirect("data_rapat")
 

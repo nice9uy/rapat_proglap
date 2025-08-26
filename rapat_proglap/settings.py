@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "compressor",
     "django_minify_html",
+    'django.contrib.humanize',
     'accounts',
     'dashboard',
     'data_rapat',

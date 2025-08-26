@@ -77,44 +77,39 @@
     <div class="mx-auto">
       <script>
         document.addEventListener("DOMContentLoaded", function () {
+
           var table = new Tabulator("#tabel_dashboard", {
-            data: {{data | safe }},
             layout: "fitColumns",
             responsiveLayout: "collapse",
-            initialSort:[             //set the initial sort order of the data
-              {column:"jumlah_perbulan", dir:"dec"},
-            ],
-            columnDefaults:{
-              tooltip:true,         //show tool tips on cells
-            },
+            ajaxURL: "{% url 'dashboard_api' %}",
             placeholder: "Data tidak tersedia",
+            ajaxConfig: "GET",
+            pagination: true,
+            paginationMode: "remote",
+            paginationSize: 15,
+            paginationCounter: "rows",
 
             columns: [
               {
                 title: "NO",
                 field: "no",
-                width: 60,
                 hozAlign: "center",
-                formatter: function(cell) {
-                  let row = cell.getRow();
-                  let table = row.getTable();
-                  let page = table.getPage();
-                  let pageSize = table.getPageSize();
-                  return ((page - 1) * pageSize) + row.getPosition();
-                }
+                headerHozAlign: "center",
+                formatter: function (cell) {
+                  let page = cell.getTable().getPage();
+                  let pageSize = cell.getTable().getPageSize();
+                  return (page - 1) * pageSize + cell.getRow().getPosition(true);
+                },
+
               },
               { title: "NAMA", field: "nama", headerHozAlign: "center" },
-              { title: "BULAN INI", field: "jumlah_perbulan", headerHozAlign: "center" , hozAlign: "center",},
+              { title: "BULAN INI", field: "jumlah_perbulan", headerHozAlign: "center", hozAlign: "center",},
               { title: "TAHUN INI", field: "jumlah_keseluruhan", headerHozAlign: "center",  formatter:"progress"},
-            ],
 
-            ajaxError: function(xhr, textStatus, errorThrown) {
-              console.error("Ajax Error:", textStatus, errorThrown);
-            }
+            ]
           });
         });
       </script>
-
     </div>
 
   </div>
