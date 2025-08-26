@@ -81,27 +81,9 @@
                     }
                 },
                 { title: "Nama", field: "nama", headerHozAlign: "center" , headerFilter:"input" },
-                                { title: "Surat", field: "judul_surat", headerHozAlign: "center" , headerFilter:"input" },
+                { title: "Surat", field: "judul_surat", headerHozAlign: "center" , headerFilter:"input" },
 
                 { title: "Kontrak", field: "judul_kontrak", headerHozAlign: "center" , headerFilter:"input" },
-                {
-                    title: "Masuk",
-                    field: "kas_masuk",
-                    headerHozAlign: "center",
-                    hozAlign: "right",
-                    formatter: function (cell) {
-                        return formatRupiah(cell.getValue());
-                    }
-                },
-                {
-                    title: "Keluar",
-                    field: "kas_keluar",
-                    headerHozAlign: "center",
-                    hozAlign: "right",
-                    formatter: function (cell) {
-                        return formatRupiah(cell.getValue());
-                    }
-                },
                 {
                     title: "AKSI",
                     field: "actions",

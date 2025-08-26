@@ -26,10 +26,10 @@ def data_rapat(request):
 
     data_rapat = list(
         DataRapatDb.objects.all().values(
-            "id", "tanggal", "jam", "nama", "judul_kontrak", "kas_masuk", "kas_keluar"
+            "id", "tanggal", "jam", "nama","judul_surat", "judul_kontrak", "kas_masuk", "kas_keluar"
         )
     )
-
+    
     group = ", ".join([group.name for group in request.user.groups.all()])
 
     # print(group)
@@ -72,6 +72,7 @@ def data_rapat_api(request):
                 "tanggal",
                 "jam",
                 "nama",
+                "judul_surat",
                 "judul_kontrak",
                 "kas_masuk",
                 "kas_keluar",
@@ -91,6 +92,7 @@ def data_rapat_api(request):
                     "tanggal": obj["tanggal"],  # ISO format: YYYY-MM-DD
                     "jam": obj["jam"],  # Time object atau string
                     "nama": obj["nama"] or "",
+                    "judul_surat": obj["judul_surat"] or "",
                     "judul_kontrak": obj["judul_kontrak"] or "",
                     "kas_masuk": float(obj["kas_masuk"] or 0),  # Kirim float
                     "kas_keluar": float(obj["kas_keluar"] or 0),
@@ -151,6 +153,14 @@ def tambah_data_rapat(request):
             strip=True,
         )
 
+        surat = bleach.clean(
+            str(request.POST.get("surat", "")).upper(),
+            tags=[],
+            attributes={},
+            protocols=[],
+            strip=True,
+        )
+
         kontrak = bleach.clean(
             str(request.POST.get("kontrak", "")).upper(),
             tags=[],
@@ -189,6 +199,8 @@ def tambah_data_rapat(request):
                 tanggal=tanggal_rapat,
                 jam=jam,
                 nama=nama,
+                                judul_surat=surat,
+
                 judul_kontrak=kontrak,
                 kas_masuk=kas_masuk,
                 kas_keluar=kas_keluar,
@@ -199,7 +211,7 @@ def tambah_data_rapat(request):
         else:
             if group == "ADMIN":
                 kas_masuk_raw = bleach.clean(
-                    (request.POST.get("kas_masuk", "")),
+                    (request.POST.get("kas_masuk_display", "")),
                     tags=[],
                     attributes={},
                     protocols=[],
@@ -209,7 +221,7 @@ def tambah_data_rapat(request):
                 kas_masuk = int(kas_masuk_raw.replace(".", ""))
 
                 kas_keluar_raw = bleach.clean(
-                    (request.POST.get("kas_keluar", "")),
+                    (request.POST.get("kas_keluar_display", "")),
                     tags=[],
                     attributes={},
                     protocols=[],
@@ -217,6 +229,9 @@ def tambah_data_rapat(request):
                 )
 
                 kas_keluar = int(kas_keluar_raw.replace(".", ""))
+
+                print(kas_masuk)
+                print(kas_keluar)
 
                 id_nama_anggota = list(
                     NamaDb.objects.filter(nama=nama).values_list("id", flat=True)
@@ -227,6 +242,7 @@ def tambah_data_rapat(request):
                     tanggal=tanggal_rapat,
                     jam=jam,
                     nama=nama,
+                    judul_surat=surat,
                     judul_kontrak=kontrak,
                     kas_masuk=kas_masuk,
                     kas_keluar=kas_keluar,
@@ -246,6 +262,7 @@ def tambah_data_rapat(request):
                     tanggal=tanggal_rapat,
                     jam=jam,
                     nama=nama,
+                    judul_surat=surat,
                     judul_kontrak=kontrak,
                 )
                 messages.success(request, "Data Rapat berhasil ditambahkan.")
@@ -311,6 +328,14 @@ def edit_data_rapat(request, rapat_id):
             strip=True,
         )
 
+        surat = bleach.clean(
+            str(request.POST.get("surat", "")).upper(),
+            tags=[],
+            attributes={},
+            protocols=[],
+            strip=True,
+        )
+
         kontrak = bleach.clean(
             str(request.POST.get("kontrak", "")).upper(),
             tags=[],
@@ -329,6 +354,7 @@ def edit_data_rapat(request, rapat_id):
                 data_rapat.tanggal = tanggal_rapat
                 data_rapat.jam = jam_formatted
                 data_rapat.nama = nama
+                data_rapat.judul_surat = surat
                 data_rapat.judul_kontrak = kontrak
                 data_rapat.save()
 
@@ -344,7 +370,7 @@ def edit_data_rapat(request, rapat_id):
                     data_rapat.id_nama_anggota = id_nama_anggota
                     data_rapat.tanggal = tanggal_rapat
                     data_rapat.jam = jam_formatted
-                    data_rapat.nama = nama
+                    data_rapat.judul_surat = surat
                     data_rapat.judul_kontrak = kontrak
                     data_rapat.save()
 
@@ -359,6 +385,7 @@ def edit_data_rapat(request, rapat_id):
                     data_rapat.id_nama_anggota = id_nama_anggota
                     data_rapat.tanggal = tanggal_rapat
                     data_rapat.jam = jam_formatted
+                    data_rapat.judul_surat = surat
                     data_rapat.judul_kontrak = kontrak
                     data_rapat.save()
 
@@ -368,19 +395,20 @@ def edit_data_rapat(request, rapat_id):
                     messages.success(request, "Jam Harap di isi")
                     return redirect("data_rapat")
             else:
-                if jam_formatted != "":
-                    data_rapat.id_nama_anggota = id_nama_anggota
-                    data_rapat.tanggal = tanggal_rapat
-                    data_rapat.jam = jam_formatted
-                    data_rapat.nama = nama
-                    data_rapat.judul_kontrak = kontrak
-                    data_rapat.save()
+                # if jam_formatted != "":
+                #     data_rapat.id_nama_anggota = id_nama_anggota
+                #     data_rapat.tanggal = tanggal_rapat
+                #     data_rapat.jam = jam_formatted
+                #     data_rapat.nama = nama
+                #     data_rapat.judul_surat = surat
+                #     data_rapat.judul_kontrak = kontrak
+                #     data_rapat.save()
 
-                    messages.success(request, "Data Rapat berhasil diedit.")
-                    return redirect("data_rapat")
-                else:
-                    messages.success(request, "Jam Harap di isi")
-                    return redirect("data_rapat")
+                #     messages.success(request, "Data Rapat berhasil diedit.")
+                #     return redirect("data_rapat")
+                # else:
+                #     messages.success(request, "Jam Harap di isi")
+                return redirect("data_rapat")
 
     return redirect("data_rapat")
 
