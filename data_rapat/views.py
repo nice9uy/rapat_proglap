@@ -5,7 +5,7 @@ import bleach
 from datetime import time
 from django.http import JsonResponse
 
-from perubahan_data.models import PerubahanData
+# from perubahan_data.models import PerubahanData
 from .models import DataRapatDb
 from tambah_user.models import NamaDb
 from django.contrib import messages
@@ -500,16 +500,16 @@ def edit_data_nominal(request, rapat_id):
     tgl_sekarang = datetime.now().date()
     jam_sekarang = datetime.now().strftime("%H:%M:%S")
 
-    awal_kas_masuk = data_rapat.kas_masuk
-    awal_kas_keluar = data_rapat.kas_keluar
+    # awal_kas_masuk = data_rapat.kas_masuk
+    # awal_kas_keluar = data_rapat.kas_keluar
 
-    print(awal_kas_masuk)
-    print(awal_kas_keluar)
+    # print(awal_kas_masuk)
+    # print(awal_kas_keluar)
 
-    try:
+    
         # cek_update = data_rapat.tanggal_update
 
-        if request.method == "POST":
+    if request.method == "POST":
             kas_masuk_raw = bleach.clean(
                 (request.POST.get("kas_masuk", "")),
                 tags=[],
@@ -538,13 +538,13 @@ def edit_data_nominal(request, rapat_id):
                     data_rapat.jam_update = jam_sekarang
                     data_rapat.save()
 
-                    PerubahanData.objects.create(
-                        id_database=data_rapat.id,
-                        no_kontrak=data_rapat.judul_kontrak,
-                        tanggal=tgl_sekarang,
-                        jam=jam_sekarang,
-                        keterangan=f"KAS MASUK : {awal_kas_masuk} -> ",
-                    )
+                    # PerubahanData.objects.create(
+                    #     id_database=data_rapat.id,
+                    #     no_kontrak=data_rapat.judul_kontrak,
+                    #     tanggal=tgl_sekarang,
+                    #     jam=jam_sekarang,
+                    #     keterangan=f"KAS MASUK : {awal_kas_masuk} -> ",
+                    # )
 
                 messages.success(request, "Data Rapat berhasil diedit.")
                 return redirect("data_rapat")
@@ -554,55 +554,55 @@ def edit_data_nominal(request, rapat_id):
                 return redirect("data_rapat")
 
         # print(cek_update)
-    except Exception:
-        cek_update = None
+    # except Exception:
+    #     cek_update = None
 
-    if cek_update is None:
-        if request.method == "POST":
-            kas_masuk_raw = bleach.clean(
-                (request.POST.get("kas_masuk", "")),
-                tags=[],
-                attributes={},
-                protocols=[],
-                strip=True,
-            )
+    # if cek_update is None:
+    #     if request.method == "POST":
+    #         kas_masuk_raw = bleach.clean(
+    #             (request.POST.get("kas_masuk", "")),
+    #             tags=[],
+    #             attributes={},
+    #             protocols=[],
+    #             strip=True,
+    #         )
 
-            kas_masuk = int(kas_masuk_raw.replace(".", ""))
+    #         kas_masuk = int(kas_masuk_raw.replace(".", ""))
 
-            kas_keluar_raw = bleach.clean(
-                (request.POST.get("kas_keluar", "")),
-                tags=[],
-                attributes={},
-                protocols=[],
-                strip=True,
-            )
+    #         kas_keluar_raw = bleach.clean(
+    #             (request.POST.get("kas_keluar", "")),
+    #             tags=[],
+    #             attributes={},
+    #             protocols=[],
+    #             strip=True,
+    #         )
 
-            kas_keluar = int(kas_keluar_raw.replace(".", ""))
+    #         kas_keluar = int(kas_keluar_raw.replace(".", ""))
 
-            # print(kas_masuk)
-            # print(kas_keluar)
+    #         # print(kas_masuk)
+    #         # print(kas_keluar)
 
-            try:
-                with transaction.atomic():
-                    data_rapat.kas_masuk = kas_masuk
-                    data_rapat.kas_keluar = kas_keluar
-                    data_rapat.tanggal_update = tgl_sekarang
-                    data_rapat.jam_update = jam_sekarang
-                    # data_rapat.save()
+    #         try:
+    #             with transaction.atomic():
+    #                 data_rapat.kas_masuk = kas_masuk
+    #                 data_rapat.kas_keluar = kas_keluar
+    #                 data_rapat.tanggal_update = tgl_sekarang
+    #                 data_rapat.jam_update = jam_sekarang
+    #                 # data_rapat.save()
 
-                    # PerubahanData.objects.create(
-                    #     id_database=data_rapat.id,
-                    #     no_kontrak=data_rapat.judul_kontrak,
-                    #     tanggal=tgl_sekarang,
-                    #     jam=jam_sekarang,
-                    #     keterangan="tttt",
-                    # )
+    #                 # PerubahanData.objects.create(
+    #                 #     id_database=data_rapat.id,
+    #                 #     no_kontrak=data_rapat.judul_kontrak,
+    #                 #     tanggal=tgl_sekarang,
+    #                 #     jam=jam_sekarang,
+    #                 #     keterangan="tttt",
+    #                 # )
 
-                messages.success(request, "Data Rapat berhasil diedit.")
-                return redirect("data_rapat")
+    #             messages.success(request, "Data Rapat berhasil diedit.")
+    #             return redirect("data_rapat")
 
-            except Exception as e:
-                messages.success(request, f"Data Rapat gagal diinput karena : {e}")
-                return redirect("data_rapat")
+    #         except Exception as e:
+    #             messages.success(request, f"Data Rapat gagal diinput karena : {e}")
+    #             return redirect("data_rapat")
 
     return redirect("data_rapat")

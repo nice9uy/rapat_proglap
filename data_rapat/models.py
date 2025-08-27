@@ -10,6 +10,7 @@ class DataRapatDb(models.Model):
     nama = models.CharField(max_length=100, null=True, blank=True)
     judul_surat = models.CharField(max_length=100, null=True, blank=True)
     judul_kontrak = models.CharField(max_length=100, null=True, blank=True)
+    validasi_nominal = models.IntegerField(default=0)
     kas_masuk = models.IntegerField(default=0)
     kas_keluar = models.IntegerField(default=0)
     created_at = models.DateField(auto_now_add=True) 
