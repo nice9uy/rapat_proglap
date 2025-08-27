@@ -56,7 +56,7 @@ def data_rapat_api(request):
         # Ambil parameter pagination
         try:
             page = int(request.GET.get("page", 1))
-            size = int(request.GET.get("size", 15))
+            size = int(request.GET.get("size", 10))
         except (ValueError, TypeError):
             return JsonResponse(
                 {"error": "Parameter page dan size harus angka positif"}, status=400
@@ -276,11 +276,6 @@ def tambah_data_rapat(request):
 
                 kas_masuk = int(kas_masuk_raw.replace(".", ""))
 
-
-                # if kas_masuk  0:
-                #     messages.warning(request, "Yakin Nominalnya Rp.0 ?")
-
-
                 DataRapatDb.objects.create(
                     id_nama_anggota=id_nama_anggota,
                     tanggal=tanggal_rapat,
@@ -433,15 +428,6 @@ def edit_data_nominal(request, rapat_id):
     tgl_sekarang = datetime.now().date()
     jam_sekarang = datetime.now().strftime("%H:%M:%S")
 
-    # awal_kas_masuk = data_rapat.kas_masuk
-    # awal_kas_keluar = data_rapat.kas_keluar
-
-    # print(awal_kas_masuk)
-    # print(awal_kas_keluar)
-
-    
-        # cek_update = data_rapat.tanggal_update
-
     if request.method == "POST":
             kas_masuk_raw = bleach.clean(
                 (request.POST.get("kas_masuk", "")),
@@ -470,14 +456,6 @@ def edit_data_nominal(request, rapat_id):
                     data_rapat.tanggal_update = tgl_sekarang
                     data_rapat.jam_update = jam_sekarang
                     data_rapat.save()
-
-                    # PerubahanData.objects.create(
-                    #     id_database=data_rapat.id,
-                    #     no_kontrak=data_rapat.judul_kontrak,
-                    #     tanggal=tgl_sekarang,
-                    #     jam=jam_sekarang,
-                    #     keterangan=f"KAS MASUK : {awal_kas_masuk} -> ",
-                    # )
 
                 messages.success(request, "Data Rapat berhasil diedit.")
                 return redirect("data_rapat")

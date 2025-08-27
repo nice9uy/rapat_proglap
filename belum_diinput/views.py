@@ -44,7 +44,7 @@ def belum_diinput_api(request):
         # Ambil parameter pagination
         try:
             page = int(request.GET.get("page", 1))
-            size = int(request.GET.get("size", 15))
+            size = int(request.GET.get("size", 10))
         except (ValueError, TypeError):
             return JsonResponse(
                 {"error": "Parameter page dan size harus angka positif"}, status=400
