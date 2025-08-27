@@ -22,13 +22,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-in@@f=eh00z_p#_11+dva&spysvgbexqkmg91i2p!(ynl3wv8*'
+SECRET_KEY = '8p54v_nt^*@7)@bnn#=f%!y)dy$4$=n9$2+9cv5kd^5v-9emx3'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    # '10.10.145.46'
+    '10.10.145.46',
+    '127.0.0.1',
+    '*'
 ]
 
 copyright = True
@@ -159,3 +161,15 @@ SESSION_COOKIE_AGE = 60 * 60 * 24 * 3  # 3 hari dalam detik
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 LOGIN_URL = '/accounts/login/'
+
+####
+
+SECURE_SSL_REDIRECT = True  # jika menggunakan HTTPS
+SECURE_HSTS_SECONDS = 31536000  # HSTS
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
+SESSION_COOKIE_SECURE = True  # hanya via HTTPS
+CSRF_COOKIE_SECURE = True    # hanya via HTTPS

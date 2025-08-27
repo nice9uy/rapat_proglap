@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>404 - Page Not Found</title>
+    <!-- Google Fonts: Arvo -->
+    <link href="https://fonts.googleapis.com/css2?family=Arvo&display=swap" rel="stylesheet">
+    <style>
+        /* Reset & Body */
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f8f9fa;
+            font-family: 'Arvo', serif;
+            color: #333;
+        }
+
+        /* 404 Page Styling */
+        .page_404 {
+            padding: 60px 60px;
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Background GIF dengan angka 404 di tengah */
+        .four_zero_four_bg {
+            background-image: url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif);
+            height: 500px;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .four_zero_four_bg h1 {
+            font-size: 100px;
+            color: white;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+            font-weight: bold;
+            margin: 0;
+            letter-spacing: 2px;
+        }
+
+        /* Teks di bawah GIF */
+        .content_box_404 {
+            margin-top: 30px;
+        }
+
+        .content_box_404 h3 {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .content_box_404 p {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .link_404 {
+            color: #fff !important;
+            padding: 12px 30px;
+            background: #39ac31;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-block;
+            font-weight: bold;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+
+        .link_404:hover {
+            background: #2d8a26;
+        }
+    </style>
+</head>
+<body>
+    <section class="page_404">
+        <div class="container">
+            <!-- Background GIF dengan angka 404 di tengah -->
+            <div class="four_zero_four_bg">
+                <h1 style="margin-top: 380px;">404</h1>
+            </div>
+
+            <!-- Teks dan tombol -->
+            <div class="content_box_404">
+                <h3>SEPERTINYA ANDA TERSESAT !!!</h3>
+                <p>Klik Tombol di bawah ini untuk kembali</p>
+                <a href="{% url 'login' %}" class="link_404">Kembali Ke Dashboard</a>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
