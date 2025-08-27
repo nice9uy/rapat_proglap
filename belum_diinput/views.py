@@ -59,7 +59,7 @@ def belum_diinput_api(request):
 
         # Query: urutkan dan ambil field penting saja
         base_queryset = (
-            DataRapatDb.objects.filter(kas_masuk=0, kas_keluar=0)
+            DataRapatDb.objects.filter(kas_keluar=0)
             .order_by("tanggal", "jam")
             .values(
                 "id",
@@ -120,7 +120,7 @@ def edit_nominal_belom_diinput(request, rapat_id):
 
     if request.method == "POST":
         kas_masuk_raw = bleach.clean(
-            (request.POST.get("kas_masuk_belum_diinput", "")),
+            (request.POST.get("kas_masuk_belum_diinput", "0")),
             tags=[],
             attributes={},
             protocols=[],
@@ -139,8 +139,6 @@ def edit_nominal_belom_diinput(request, rapat_id):
 
         kas_keluar = int(kas_keluar_raw.replace(".", ""))
 
-        print(kas_masuk)
-        print(kas_keluar)
 
         if kas_masuk != 0 or kas_keluar != 0:
             data_rapat.kas_masuk = kas_masuk

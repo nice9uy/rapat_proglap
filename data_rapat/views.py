@@ -22,8 +22,7 @@ logger = logging.getLogger(__name__)
 def data_rapat(request):
     nama_anggota = list(NamaDb.objects.all().values_list("nama", flat=True))
     user = request.user
-    # print(user)
-
+  
     data_rapat = list(
         DataRapatDb.objects.all().values(
             "id",
@@ -131,40 +130,7 @@ def tambah_data_rapat(request):
     tgl_sekarang = datetime.now().date()
     jam_sekarang = datetime.now().strftime("%H:%M:%S")
 
-    ### UNTUK  DASHBOARD ###################
-    # DashboardDb.objects.all().delete()
-
-    # data = []
-    # sekarang = timezone.now()
-    # bulan_sekarang = sekarang.month
-    # tahun_sekarang = sekarang.year
-
-    # anggota_list = NamaDb.objects.all()
-
-    # rapat_bulanan = DataRapatDb.objects.filter(tanggal__month=bulan_sekarang)
-    # semua_rapat = DataRapatDb.objects.filter(tanggal__year=tahun_sekarang)
-
-    # for anggota in anggota_list:
-    #     nama_anggota = anggota.nama
-    #     jumlah_perbulan = rapat_bulanan.filter(nama=nama_anggota).count()
-    #     jumlah_keseluruhan = semua_rapat.filter(nama=nama_anggota).count()
-
-    #     data.append(
-    #         {
-    #             "id": anggota.id,
-    #             "nama": nama_anggota,
-    #             "jumlah_perbulan": jumlah_perbulan,
-    #             "jumlah_keseluruhan": jumlah_keseluruhan,
-    #         }
-    #     )
-
-    # data_sorted = sorted(data, key=lambda x: x["jumlah_perbulan"], reverse=True)
-    # data_json = json.loads(data_sorted)
-
-    # print(data_json)
-
-    ##########################################
-
+    
     if request.method == "POST":
         raw_date = bleach.clean(
             request.POST.get("tanggal_rapat", "").strip(),
@@ -248,25 +214,6 @@ def tambah_data_rapat(request):
                     kas_keluar=kas_keluar,
                 )
 
-                # for item in data_json:
-                #     DashboardDb.objects.update_or_create(
-                #         nama=item["nama"],
-                #         defaults={
-                #             "bulan_ini": item["jumlah_perbulan"],
-                #             "tahun_ini": item["jumlah_keseluruhan"],
-                #         },
-                #     )
-
-
-                # for item in data_sorted:
-                #     DashboardDb.objects.update_or_create(
-                #         anggota_id=item["id"],  # unique key
-                #         defaults={
-                #             "nama": item["nama"],
-                #             "bulan_ini": item["jumlah_perbulan"],
-                #             "tahun_ini": item["jumlah_keseluruhan"],
-                #         },
-                #     )
                 messages.success(request, "Data Rapat berhasil ditambahkan.")
 
             return redirect("data_rapat")
@@ -293,8 +240,6 @@ def tambah_data_rapat(request):
 
                 kas_keluar = int(kas_keluar_raw.replace(".", ""))
 
-                # print(kas_masuk)
-                # print(kas_keluar)
 
                 id_nama_anggota = list(
                     NamaDb.objects.filter(nama=nama).values_list("id", flat=True)
@@ -313,15 +258,6 @@ def tambah_data_rapat(request):
                     jam_update=jam_sekarang,
                 )
 
-                # for item in data_json:
-                #     DashboardDb.objects.update_or_create(
-                #         nama=item["nama"],
-                #         defaults={
-                #             "bulan_ini": item["jumlah_perbulan"],
-                #             "tahun_ini": item["jumlah_keseluruhan"],
-                #         },
-                #     )
-
                 messages.success(request, "Data Rapat berhasil ditambahkan.")
                 return redirect("data_rapat")
 
@@ -330,22 +266,31 @@ def tambah_data_rapat(request):
                     NamaDb.objects.filter(nama=nama).values_list("id", flat=True)
                 )[0]
 
+                kas_masuk_raw = bleach.clean(
+                    (request.POST.get("kas_masuk_display", "")),
+                    tags=[],
+                    attributes={},
+                    protocols=[],
+                    strip=True,
+                )
+
+                kas_masuk = int(kas_masuk_raw.replace(".", ""))
+
+
+                # if kas_masuk  0:
+                #     messages.warning(request, "Yakin Nominalnya Rp.0 ?")
+
+
                 DataRapatDb.objects.create(
                     id_nama_anggota=id_nama_anggota,
                     tanggal=tanggal_rapat,
                     jam=jam,
                     nama=nama,
+                    kas_masuk = kas_masuk,
                     judul_surat=surat,
                     judul_kontrak=kontrak,
                 )
-                # for item in data_json:
-                #     DashboardDb.objects.update_or_create(
-                #         nama=item["nama"],
-                #         defaults={
-                #             "bulan_ini": item["jumlah_perbulan"],
-                #             "tahun_ini": item["jumlah_keseluruhan"],
-                #         },
-                #     )
+             
                 messages.success(request, "Data Rapat berhasil ditambahkan.")
                 return redirect("data_rapat")
 
@@ -476,19 +421,7 @@ def edit_data_rapat(request, rapat_id):
                     messages.success(request, "Jam Harap di isi")
                     return redirect("data_rapat")
             else:
-                # if jam_formatted != "":
-                #     data_rapat.id_nama_anggota = id_nama_anggota
-                #     data_rapat.tanggal = tanggal_rapat
-                #     data_rapat.jam = jam_formatted
-                #     data_rapat.nama = nama
-                #     data_rapat.judul_surat = surat
-                #     data_rapat.judul_kontrak = kontrak
-                #     data_rapat.save()
-
-                #     messages.success(request, "Data Rapat berhasil diedit.")
-                #     return redirect("data_rapat")
-                # else:
-                #     messages.success(request, "Jam Harap di isi")
+              
                 return redirect("data_rapat")
 
     return redirect("data_rapat")
@@ -553,56 +486,5 @@ def edit_data_nominal(request, rapat_id):
                 messages.success(request, f"Data Rapat gagal diinput karena : {e}")
                 return redirect("data_rapat")
 
-        # print(cek_update)
-    # except Exception:
-    #     cek_update = None
-
-    # if cek_update is None:
-    #     if request.method == "POST":
-    #         kas_masuk_raw = bleach.clean(
-    #             (request.POST.get("kas_masuk", "")),
-    #             tags=[],
-    #             attributes={},
-    #             protocols=[],
-    #             strip=True,
-    #         )
-
-    #         kas_masuk = int(kas_masuk_raw.replace(".", ""))
-
-    #         kas_keluar_raw = bleach.clean(
-    #             (request.POST.get("kas_keluar", "")),
-    #             tags=[],
-    #             attributes={},
-    #             protocols=[],
-    #             strip=True,
-    #         )
-
-    #         kas_keluar = int(kas_keluar_raw.replace(".", ""))
-
-    #         # print(kas_masuk)
-    #         # print(kas_keluar)
-
-    #         try:
-    #             with transaction.atomic():
-    #                 data_rapat.kas_masuk = kas_masuk
-    #                 data_rapat.kas_keluar = kas_keluar
-    #                 data_rapat.tanggal_update = tgl_sekarang
-    #                 data_rapat.jam_update = jam_sekarang
-    #                 # data_rapat.save()
-
-    #                 # PerubahanData.objects.create(
-    #                 #     id_database=data_rapat.id,
-    #                 #     no_kontrak=data_rapat.judul_kontrak,
-    #                 #     tanggal=tgl_sekarang,
-    #                 #     jam=jam_sekarang,
-    #                 #     keterangan="tttt",
-    #                 # )
-
-    #             messages.success(request, "Data Rapat berhasil diedit.")
-    #             return redirect("data_rapat")
-
-    #         except Exception as e:
-    #             messages.success(request, f"Data Rapat gagal diinput karena : {e}")
-    #             return redirect("data_rapat")
 
     return redirect("data_rapat")

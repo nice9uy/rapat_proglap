@@ -94,6 +94,15 @@
                     }
                 },
                 {
+                    title: "Nominal",
+                    field: "kas_keluar",
+                    headerHozAlign: "center",
+                    hozAlign: "right",
+                    formatter: function (cell) {
+                        return formatRupiah(cell.getValue());
+                    }
+                },
+                {
                     title: "Keluar",
                     field: "kas_keluar",
                     headerHozAlign: "center",
