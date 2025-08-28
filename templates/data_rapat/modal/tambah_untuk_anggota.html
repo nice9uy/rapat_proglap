@@ -79,7 +79,6 @@
                                 required>
                             <input type="hidden" name="kas_masuk" value="0">
 
-
                             <label class="block mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-white" for="small_size">BERITA ACARA SERAH TERIMA </label>
                             <input class="block w-full mb-5 text-xs text-gray-900 border border-white rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" name="bast_file" id="small_size"  accept=".pdf" type="file">
 
@@ -99,5 +98,56 @@
     </div>
 
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function formatRupiah(num) {
+                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+
+            function parseRupiah(str) {
+                return parseInt(str.replace(/\D/g, '')) || 0;
+            }
+
+            document.querySelectorAll('input[type="text"][data-raw]').forEach(input => {
+                const hiddenInput = input.nextElementSibling; // hidden input setelahnya
+
+                input.addEventListener('focus', function () {
+                    input.value = input.getAttribute('data-raw');
+                });
+
+                input.addEventListener('blur', function () {
+                    const num = parseRupiah(input.value);
+                    input.value = formatRupiah(num);
+                    input.setAttribute('data-raw', num);
+                    hiddenInput.value = num;
+                });
+
+        // 🔥 Realtime format saat ketik
+                input.addEventListener('input', function () {
+                    let value = input.value.replace(/\D/g, '');
+                    if (value === '') {
+                        input.value = '';
+                        return;
+                    }
+                    input.value = formatRupiah(value);
+                });
+
+                input.addEventListener('paste', function (e) {
+                    e.preventDefault();
+                    const pasted = e.clipboardData.getData('text').replace(/\D/g, '');
+                    if (pasted) {
+                        input.value = formatRupiah(pasted);
+                        const num = parseInt(pasted) || 0;
+                        hiddenInput.value = num;
+                        input.setAttribute('data-raw', num);
+                    }
+                });
+            });
+        });
+    </script>
+
 {% endif %}
+
+
+
 
