@@ -14,4 +14,5 @@ dependencies = [
     "pandas>=2.3.2",
     "python-magic>=0.4.27",
     "ruff>=0.12.9",
+    "whitenoise>=6.9.0",
 ]

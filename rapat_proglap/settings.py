@@ -28,12 +28,7 @@ SECRET_KEY = '8p54v_nt^*@7)@bnn#=f%!y)dy$4$=n9$2+9cv5kd^5v-9emx3'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    # "10.10.145.46",
-    # '10.10.145.46',
-    # '127.0.0.1',
-    
-]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1',]
 
 copyright = True
 
@@ -61,6 +56,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -141,7 +137,16 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR, "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles"
+# STATIC_ROOT = BASE_DIR / "staticfiles"
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
+
+
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',  # ✅
+]
 
 
 MEDIA_URL = '/media/'
@@ -166,6 +171,10 @@ SESSION_COOKIE_AGE = 60 * 60 * 24 * 3  # 3 hari dalam detik
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 LOGIN_URL = '/accounts/login/'
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+COMPRESS_ENABLED = True
+
 
 ####
 
