@@ -12,7 +12,7 @@ class ListDbDataRapat(admin.ModelAdmin):
         "nama",
         "judul_surat",
         "judul_kontrak",
-        "validasi_nominal",
+        "file_bast",
         "kas_masuk",
         "kas_keluar",
         "created_at",

@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from data_rapat.models import DataRapatDb
 from tambah_user.models import NamaDb
 from django.utils import timezone
-import polars as pl
+import pandas as pd
 from django.core.paginator import Paginator
 
 
@@ -18,56 +18,51 @@ def dashboard(request):
     tahun_ini = datetime.now().year
 
     try:
+        # Ambil data dari database
         fields = ["tanggal", "kas_masuk", "kas_keluar"]
         data_list = list(DataRapatDb.objects.values(*fields).iterator(chunk_size=2000))
 
-        df = pl.DataFrame(data_list)
+        # Konversi ke DataFrame pandas
+        df = pd.DataFrame(data_list)
 
-        #### TOTAL KAS #####################
-        kas_masuk = df["kas_masuk"].sum()
-        kas_keluar = df["kas_keluar"].sum()
+        # Jika DataFrame tidak kosong, lakukan operasi
+        if not df.empty:
+            # Pastikan kolom tanggal dalam format datetime
+            df["tanggal"] = pd.to_datetime(df["tanggal"])
 
-        total_kas = kas_masuk - kas_keluar
-        ####################################
+            #### TOTAL KAS #####################
+            kas_masuk = df["kas_masuk"].sum()
+            kas_keluar = df["kas_keluar"].sum()
+            total_kas = kas_masuk - kas_keluar
+            ####################################
 
-        #### Total Kas bulan INi ###########
-        total_kas_masuk_bulan_ini = (
-            df.filter(
-                (pl.col("tanggal").dt.month() == bulan_ini)
-                & (pl.col("tanggal").dt.year() == tahun_ini)
+            #### Total Kas bulan INi ###########
+            mask_bulan_ini = (
+                (df["tanggal"].dt.month == bulan_ini) &
+                (df["tanggal"].dt.year == tahun_ini)
             )
-            .select(pl.sum("kas_masuk"))
-            .item()
-        )
+            filtered_bulan_ini = df[mask_bulan_ini]
 
-        total_kas_keluar_bulan_ini = (
-            df.filter(
-                (pl.col("tanggal").dt.month() == bulan_ini)
-                & (pl.col("tanggal").dt.year() == tahun_ini)
-            )
-            .select(pl.sum("kas_keluar"))
-            .item()
-        )
+            total_kas_masuk_bulan_ini = filtered_bulan_ini["kas_masuk"].sum()
+            total_kas_keluar_bulan_ini = filtered_bulan_ini["kas_keluar"].sum()
+            total_kas_bulan_ini = total_kas_masuk_bulan_ini - total_kas_keluar_bulan_ini
 
-        total_kas_bulan_ini = total_kas_masuk_bulan_ini - total_kas_keluar_bulan_ini
+            #####################################
 
-        #####################################
-
-        jumlah_rapat_bulan_ini = (
-            df.filter(
-                (pl.col("tanggal").dt.year() == tahun_ini)
-                & (pl.col("tanggal").dt.month() == bulan_ini)
-            )
-            .select(pl.count())
-            .item()
-        )
+            jumlah_rapat_bulan_ini = len(filtered_bulan_ini)
+        else:
+            # Jika tidak ada data
+            total_kas = 0
+            total_kas_bulan_ini = 0
+            total_kas_keluar_bulan_ini = 0
+            jumlah_rapat_bulan_ini = 0
 
     except Exception as e:
         total_kas = 0
-        total_kas_keluar_bulan_ini = 0
         total_kas_bulan_ini = 0
+        total_kas_keluar_bulan_ini = 0
         jumlah_rapat_bulan_ini = 0
-        print(f"error karena : {e}")
+        print(f"Error karena: {e}")
 
     context = {
         "page_title": "DASHBOARD",

@@ -18,6 +18,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path("adminnjlllanllvnlwjjlwrhg,sjrgjsrliigjsrlijhsllqghrlsgjsijlahlajalvvlvalvqlafvnjlfhk/", admin.site.urls),
@@ -30,5 +32,9 @@ urlpatterns = [
      path("belum_diinput/", include("belum_diinput.urls")),
           path("perubahan_data/", include("perubahan_data.urls")),
 
-]
+] 
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

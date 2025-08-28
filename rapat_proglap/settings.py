@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 from django.contrib.messages import constants as messages
 
@@ -28,9 +29,10 @@ SECRET_KEY = '8p54v_nt^*@7)@bnn#=f%!y)dy$4$=n9$2+9cv5kd^5v-9emx3'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '10.10.145.46',
-    '127.0.0.1',
-    '*'
+    # "10.10.145.46",
+    # '10.10.145.46',
+    # '127.0.0.1',
+    
 ]
 
 copyright = True
@@ -142,6 +144,9 @@ STATICFILES_DIRS = [BASE_DIR, "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
@@ -164,12 +169,12 @@ LOGIN_URL = '/accounts/login/'
 
 ####
 
-SECURE_SSL_REDIRECT = True  # jika menggunakan HTTPS
-SECURE_HSTS_SECONDS = 31536000  # HSTS
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_BROWSER_XSS_FILTER = True
-X_FRAME_OPTIONS = 'DENY'
-SESSION_COOKIE_SECURE = True  # hanya via HTTPS
-CSRF_COOKIE_SECURE = True    # hanya via HTTPS
+# SECURE_SSL_REDIRECT = True  # jika menggunakan HTTPS
+# SECURE_HSTS_SECONDS = 31536000  # HSTS
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# SECURE_HSTS_PRELOAD = True
+# SECURE_CONTENT_TYPE_NOSNIFF = True
+# SECURE_BROWSER_XSS_FILTER = True
+# X_FRAME_OPTIONS = 'DENY'
+# SESSION_COOKIE_SECURE = True  # hanya via HTTPS
+# CSRF_COOKIE_SECURE = True    # hanya via HTTPS
