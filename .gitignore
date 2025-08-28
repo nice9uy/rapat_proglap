@@ -266,3 +266,6 @@ local_settings.py
 .env
 db.sqlite3
 static/CACHE/
+
+/media/*
+!/media/.gitkeep

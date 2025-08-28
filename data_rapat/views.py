@@ -1,21 +1,15 @@
 from datetime import datetime
-import os
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 import bleach
 from datetime import time
 from django.http import JsonResponse
-
-# from perubahan_data.models import PerubahanData
 from .models import DataRapatDb
 from tambah_user.models import NamaDb
 from django.contrib import messages
 from django.core.paginator import Paginator
 import logging
 from django.db import transaction
-# from django.conf import settings
-# import magic
-
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +31,7 @@ def data_rapat(request):
             "kas_masuk",
             "kas_keluar",
             "file_bast",
+            "no_bast",
         )
     )
 
@@ -96,7 +91,8 @@ def data_rapat_api(request):
                     "judul_kontrak": obj.judul_kontrak or "",
                     "kas_masuk": float(obj.kas_masuk or 0),
                     "kas_keluar": float(obj.kas_keluar or 0),
-                    "file_bast": file_bast_url,  # URL lengkap: /media/... atau https://...
+                    "file_bast": file_bast_url,  
+                    "no_bast": obj.no_bast,  
                 }
             )
 
@@ -175,6 +171,14 @@ def tambah_data_rapat(request):
             strip=True,
         )
 
+        no_bast = bleach.clean(
+            str(request.POST.get("no_bast", "")).upper(),
+            tags=[],
+            attributes={},
+            protocols=[],
+            strip=True,
+        )
+
         if request.user.is_superuser:
             kas_masuk_raw = bleach.clean(
                 (request.POST.get("kas_masuk", "")),
@@ -211,6 +215,7 @@ def tambah_data_rapat(request):
                     kas_masuk=kas_masuk,
                     kas_keluar=kas_keluar,
                     file_bast=uploaded_file_bast,
+                    no_bast = no_bast
                 )
 
                 messages.success(request, "Data Rapat berhasil ditambahkan.")
@@ -255,6 +260,7 @@ def tambah_data_rapat(request):
                     kas_keluar=kas_keluar,
                     tanggal_update=tgl_sekarang,
                     jam_update=jam_sekarang,
+                    no_bast = no_bast
                 )
 
                 messages.success(request, "Data Rapat berhasil ditambahkan.")
@@ -284,6 +290,7 @@ def tambah_data_rapat(request):
                     judul_surat=surat,
                     judul_kontrak=kontrak,
                     file_bast=uploaded_file_bast,
+                    no_bast = no_bast
                 )
 
                 messages.success(request, "Data Rapat berhasil ditambahkan.")
@@ -353,6 +360,15 @@ def edit_data_rapat(request, rapat_id):
             NamaDb.objects.filter(nama=nama).values_list("id", flat=True).first()
         )
 
+
+        no_bast = bleach.clean(
+            str(request.POST.get("no_bast", "")).upper(),
+            tags=[],
+            attributes={},
+            protocols=[],
+            strip=True,
+        )
+
         uploaded_file = request.FILES.get("bast_file")
 
         if uploaded_file is None:
@@ -361,7 +377,7 @@ def edit_data_rapat(request, rapat_id):
         else:
             data_rapat.file_bast.delete()
             file_bast = uploaded_file
-            
+
         if request.user.is_superuser:
             data_rapat.id_nama_anggota = id_nama_anggota
             data_rapat.tanggal = tanggal_rapat
@@ -370,6 +386,7 @@ def edit_data_rapat(request, rapat_id):
             data_rapat.judul_surat = surat
             data_rapat.judul_kontrak = kontrak
             data_rapat.file_bast = file_bast
+            data_rapat.no_bast = no_bast
             data_rapat.save()
 
             messages.success(request, "Data Rapat berhasil diedit.")
@@ -394,11 +411,12 @@ def edit_data_rapat(request, rapat_id):
                 data_rapat.judul_surat = surat
                 data_rapat.judul_kontrak = kontrak
                 data_rapat.file_bast = file_bast
+                data_rapat.no_bast = no_bast
                 data_rapat.save()
 
                 messages.success(request, "Data Rapat berhasil diedit.")
                 return redirect("data_rapat")
-            
+
             elif group == "PENGAWAS":
                 data_rapat.id_nama_anggota = id_nama_anggota
                 data_rapat.tanggal = tanggal_rapat
@@ -406,6 +424,7 @@ def edit_data_rapat(request, rapat_id):
                 data_rapat.judul_surat = surat
                 data_rapat.judul_kontrak = kontrak
                 data_rapat.file_bast = file_bast
+                data_rapat.no_bast = no_bast
                 data_rapat.save()
 
                 messages.success(request, "Data Rapat berhasil diedit.")

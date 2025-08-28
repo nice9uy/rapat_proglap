@@ -16,6 +16,8 @@ class DataRapatDb(models.Model):
     tanggal_update = models.DateField(null=True, blank=True)
     jam_update= models.TimeField(null=True, blank=True)
     file_bast = models.FileField(upload_to='BAST/', null=True, blank=True) 
+    no_bast =  models.CharField(max_length=100, null=True, blank=True)
+    pengecualian = models.BooleanField(default=False)
 
     def __str__(self):
         return self.judul_kontrak

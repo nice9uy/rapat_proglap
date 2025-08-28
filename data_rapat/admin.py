@@ -13,11 +13,13 @@ class ListDbDataRapat(admin.ModelAdmin):
         "judul_surat",
         "judul_kontrak",
         "file_bast",
+        "no_bast",
         "kas_masuk",
         "kas_keluar",
         "created_at",
         "tanggal_update",
-        "jam_update"
+        "jam_update",
+        "pengecualian"
     )
 
 admin.site.register(DataRapatDb, ListDbDataRapat)
