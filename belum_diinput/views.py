@@ -60,6 +60,7 @@ def belum_diinput_api(request):
         # Query: urutkan dan ambil field penting saja
         base_queryset = (
             DataRapatDb.objects.filter(kas_keluar=0)
+            .exclude(pengecualian = True)
             .order_by("tanggal", "jam")
             .values(
                 "id",
